@@ -337,10 +337,27 @@ int main(int , char *argv[]){
 		overtime += physicianOvertime * physicianOvertime;
 	}
 
+	//TODO pesquisar como adicionar restrição durante a execução
+	//TODO utilizar algoritimo de geração de pesos para as restrições flexiveis
+	//TODO retirar minimização e mandar o solver devolver todas as soluções. Descartar as dominadas
+	//TODO plotar gráfico com as soluções
+	//TODO tentar obter um conjunto de soluções sem retirar a função objetivo
+
+//    IloObjective obj = IloMinimize(env,  (2 * inconsistency) + overtime);
+//	  IloObjective obj = IloMinimize(env,  inconsistency + (2 * overtime));
     IloObjective obj = IloMinimize(env,  inconsistency + overtime);
+//    IloObjective obj = IloMinimize(env,  inconsistency);
+//    IloObjective obj = IloMinimize(env,  overtime);
+
 	model.add(obj);
     IloCP cp(model);
     cp.setParameter(IloCP::TimeLimit, 20);
+
+    // Para devolver todas as soluções
+//    cp.setParameter(IloCP::LogVerbosity, IloCP::Quiet);
+//
+//    cp.startNewSearch();
+//    while(cp.next()){
 
 		if (cp.solve())
       {
