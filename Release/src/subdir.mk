@@ -7,26 +7,38 @@ CPP_SRCS += \
 ../src/Area.cpp \
 ../src/Physician.cpp \
 ../src/Shift.cpp \
-../src/main.cpp 
+../src/SoftConstraint.cpp \
+../src/Solution.cpp \
+../src/SolutionSet.cpp \
+../src/main.cpp \
+../src/roastering.cpp 
 
 OBJS += \
 ./src/Area.o \
 ./src/Physician.o \
 ./src/Shift.o \
-./src/main.o 
+./src/SoftConstraint.o \
+./src/Solution.o \
+./src/SolutionSet.o \
+./src/main.o \
+./src/roastering.o 
 
 CPP_DEPS += \
 ./src/Area.d \
 ./src/Physician.d \
 ./src/Shift.d \
-./src/main.d 
+./src/SoftConstraint.d \
+./src/Solution.d \
+./src/SolutionSet.d \
+./src/main.d \
+./src/roastering.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
 src/%.o: ../src/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: Cross G++ Compiler'
-	g++ -DIL_STD -DNDEBUG -DILOUSEMT -DILM_REENTRANT -I/opt/ibm/ILOG/CPLEX_Studio1210/cpoptimizer/include -I/opt/ibm/ILOG/CPLEX_Studio1210/concert/include -O3 -pedantic -Wall -Wextra -c -fmessage-length=0 -fstrict-aliasing -fexceptions -frounding-math  -Wno-long-long -m64 -Wno-ignored-attributes -fPIC -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
+	g++ -DIL_STD -DNDEBUG -DILOUSEMT -DILM_REENTRANT -I/opt/ibm/ILOG/CPLEX_Studio1210/cpoptimizer/include -I/opt/ibm/ILOG/CPLEX_Studio1210/concert/include -I/usr/include/python3.8 -I/home/lucas/vcpkg/installed/x64-linux/include -O3 -pedantic -Wall -Wextra -c -fmessage-length=0 -fstrict-aliasing -fexceptions -frounding-math  -Wno-long-long -m64 -Wno-ignored-attributes -std=c++11 -I/usr/include/python3.8 -fPIC -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

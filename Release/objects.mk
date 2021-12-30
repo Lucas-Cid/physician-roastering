@@ -4,5 +4,5 @@
 
 USER_OBJS :=
 
-LIBS := -lcp -lcplex -lconcert -lpthread -lm -ldl
+LIBS := -lcp -lpython3.8 -lcplex -lconcert -lpthread -lm -ldl
 

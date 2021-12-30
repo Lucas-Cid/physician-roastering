@@ -44,7 +44,7 @@ all: physician\ _roastering
 physician\ _roastering: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cross G++ Linker'
-	g++ -L/opt/ibm/ILOG/CPLEX_Studio1210/cpoptimizer/lib/x86-64_linux/static_pic -L/opt/ibm/ILOG/CPLEX_Studio1210/cplex/lib/x86-64_linux/static_pic -L/opt/ibm/ILOG/CPLEX_Studio1210/concert/lib/x86-64_linux/static_pic -o "physician _roastering" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++ -L/opt/ibm/ILOG/CPLEX_Studio1210/cpoptimizer/lib/x86-64_linux/static_pic -L/usr/lib/python3.8/config-3.8-x86_64-linux-gnu -L/opt/ibm/ILOG/CPLEX_Studio1210/cplex/lib/x86-64_linux/static_pic -L/opt/ibm/ILOG/CPLEX_Studio1210/concert/lib/x86-64_linux/static_pic -I/usr/include/python3.8 -o "physician _roastering" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
