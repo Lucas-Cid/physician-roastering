@@ -5,31 +5,34 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../src/Area.cpp \
+../src/CsvHandler.cpp \
 ../src/Physician.cpp \
+../src/RosteringInput.cpp \
 ../src/Shift.cpp \
 ../src/SoftConstraint.cpp \
 ../src/Solution.cpp \
-../src/SolutionSet.cpp \
 ../src/main.cpp \
 ../src/roastering.cpp 
 
 OBJS += \
 ./src/Area.o \
+./src/CsvHandler.o \
 ./src/Physician.o \
+./src/RosteringInput.o \
 ./src/Shift.o \
 ./src/SoftConstraint.o \
 ./src/Solution.o \
-./src/SolutionSet.o \
 ./src/main.o \
 ./src/roastering.o 
 
 CPP_DEPS += \
 ./src/Area.d \
+./src/CsvHandler.d \
 ./src/Physician.d \
+./src/RosteringInput.d \
 ./src/Shift.d \
 ./src/SoftConstraint.d \
 ./src/Solution.d \
-./src/SolutionSet.d \
 ./src/main.d \
 ./src/roastering.d 
 

@@ -7,7 +7,7 @@
 #include "../includes/Shift.h"
 #include "../includes/Area.h"
 #include "../includes/Solution.h"
-#include "../includes/SolutionSet.h"
+#include "../includes/RosteringInput.h"
 
 typedef IloArray <IloIntVarArray> IloIntVarArray2;
 typedef IloArray <IloIntVarArray2> IloIntVarArray3;
@@ -20,109 +20,23 @@ class Physician;
 
 using namespace std;
 
-vector<vector<string>> readCSV(char fileName[]){
-	string base = "src/";
-	string path = fileName;
-    ifstream file(base+path);
-	string line;
-	vector<vector<string>> csv;
-
-	if(!file.good()){
-		cout << "Arquivo " << path << " não encontrado" << endl;
-		return csv;
-	}
-
-	//Ignora a primeira linha, a qual contém os rótulos das colunas do csv
-	getline(file, line);
-
-	//Lê uma linha por vez
-	while(getline(file, line)){
-
-		istringstream s(line);
-		string cell;
-		vector<string> fields;
-
-		//Lê cada célula de uma linha e coloca em um vetor
-		while (getline(s, cell,',')){
-			fields.push_back(cell);
-		}
-		csv.push_back(fields);
-	}
-	return csv;
-}
-
-void readPhysiciansData(vector<Physician> *physicians, char fileName[]){
-	vector<vector<string>> csv = readCSV(fileName);
-
-	for(int i = 0; i < (int)csv.size(); i++){
-		physicians->push_back(Physician(csv[i][0], stoi(csv[i][1]), stoi(csv[i][2]), csv[i][3], stoi(csv[i][4])));
-	}
-}
-
-void readConfigData(int *maxHoursMargin, int *minHoursMargin, int *maxNightShifts, int *weeks, int *days, char fileName[]){
-	vector<vector<string>> csv = readCSV(fileName);
-
-	for(int i = 0; i < (int)csv.size(); i++){
-		*minHoursMargin = stoi(csv[i][0]);
-		*maxHoursMargin = stoi(csv[i][1]);
-		*maxNightShifts = stoi(csv[i][2]);
-		*weeks = stoi(csv[i][3]);
-		*days = *weeks * 7;
-	}
-}
-
-void readShiftsData(vector<Shift> *shifts, char fileName[]){
-	vector<vector<string>> csv = readCSV(fileName);
-
-	for(int i = 0; i < (int)csv.size(); i++){
-		shifts->push_back(Shift(csv[i][0], stoi(csv[i][1])));
-	}
-}
-
-void readAreasData(vector<Area> *areas, char fileName[]){
-	vector<vector<string>> csv = readCSV(fileName);
-
-	for(int i = 0; i < (int)csv.size(); i++){
-		areas->push_back(Area(csv[i][0], stoi(csv[i][1])));
-	}
-
-}
-
-
-SolutionSet rostering(char *argv[]){
+Solution rostering(RosteringInput input){
   IloEnv env;
-  SolutionSet solutionSet;
   try {
 	IloModel model(env);
 
-	vector<Physician> physicians;
-	vector<Shift> shifts;
-	vector<Area> areas;
+	vector<Physician> physicians = input.physicians;
+	vector<Shift> shifts = input.shifts;
+	vector<Area> areas = input.areas;
 
 	//minHours é a margem inferior para a quantidade de horas trabalhadas de um médico
 	//se um médico tem um contrato de 40 horas e o minHours é 10, este médico será alocano para, no mínimo, 30 hoas (40 - 10)
 	//o mesmo vale para o maxHours, mas para o limite superior
-	int maxHoursMargin, minHoursMargin, maxNightShifts, weeks, days;
-
-	//Lê o arquivo com as características dos médicos
-	readPhysiciansData(&physicians, argv[1]);
-
-	//Lê o arquivo de configuração
-	readConfigData(&maxHoursMargin, &minHoursMargin, &maxNightShifts, &weeks, &days, argv[2]);
-
-	//Lê o arquivo com as características dos turnos
-	readShiftsData(&shifts, argv[3]);
-
-	//Lê o arquivo com as características das áreas do hospital
-	readAreasData(&areas, argv[4]);
+	int maxHoursMargin = input.maxHoursMargin, minHoursMargin = input.minHoursMargin,
+		maxNightShifts = input.maxNightShifts, weeks = input.weeks, days = input.days;
 
 	string weekdaysName[7] = {"Mon", "Tue", "Wed", "Thur",
 								"Fri", "Sat", "Sun"};
-
-	solutionSet.areas = areas;
-	solutionSet.physicians = physicians;
-	solutionSet.shifts = shifts;
-	solutionSet.weeks = weeks;
 
 	IloIntVarArray4 assignment(env);
 	//Assignment[d][s][a][t] representa o médico que preencherá a vaga t da área a no
@@ -346,14 +260,22 @@ SolutionSet rostering(char *argv[]){
 		overtime += physicianOvertime * physicianOvertime;
 	}
 
-    IloObjective obj = IloMinimize(env,  inconsistency + overtime);
-
+    IloObjective obj = IloMinimize(env,  (input.weights[0] * inconsistency) + (input.weights[1] * overtime));
 	model.add(obj);
+
+	// TODO tirar IloAnd
+    if(input.solutions.size() > 0){
+		IloAnd softConstraintLimitExpression(env);
+		for(int i = 0; i < (int) input.solutions.size(); i++){
+			softConstraintLimitExpression.add((inconsistency < input.solutions[i].softConstraints[0].value) ||
+											  (overtime < input.solutions[i].softConstraints[1].value));
+		}
+		model.add(softConstraintLimitExpression);
+    }
+
     IloCP cp(model);
-    cp.setParameter(IloCP::TimeLimit, 5);
-    cp.setParameter(IloCP::LogVerbosity, IloCP::Quiet);
-    cp.startNewSearch();
-    while(cp.next()){
+    cp.setParameter(IloCP::TimeLimit, 1);
+    if (cp.solve()){
     	Solution newSolution;
     	newSolution.softConstraints.push_back(SoftConstraint("Inconsistency", cp.getValue(inconsistency)));
     	newSolution.softConstraints.push_back(SoftConstraint("Overtime", cp.getValue(overtime)));
@@ -378,12 +300,13 @@ SolutionSet rostering(char *argv[]){
 			}
     	}
     	newSolution.schedule = schedule;
-    	solutionSet.solutions.push_back(newSolution);
+    	return newSolution;
     }
   }
   catch (IloException& ex) {
     env.out() << "Error: " << ex << std::endl;
   }
   env.end();
-  return solutionSet;
+  Solution notFound;
+  return notFound;
 }

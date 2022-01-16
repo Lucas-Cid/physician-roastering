@@ -17,23 +17,13 @@
 #include "../includes/Shift.h"
 #include "../includes/Area.h"
 #include "../includes/Solution.h"
-#include "../includes/SolutionSet.h"
+#include "../includes/RosteringInput.h"
 
 
 class Physician;
 
 using namespace std;
 
-vector<vector<string>> readCSV(char fileName[]);
-
-void readPhysiciansData(vector<Physician> *physicians, char fileName[]);
-
-void readConfigData(int *maxHoursMargin, int *minHoursMargin, int *maxNightShifts, int *weeks, int *days, char fileName[]);
-
-void readShiftsData(vector<Shift> *shifts, char fileName[]);
-
-void readAreasData(vector<Area> *areas, char fileName[]);
-
-SolutionSet rostering(char *argv[]);
+Solution rostering(RosteringInput input);
 
 #endif /* ROASTERING_H_ */
