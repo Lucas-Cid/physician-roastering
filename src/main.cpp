@@ -17,19 +17,33 @@ namespace plt = matplotlibcpp;
 using namespace std;
 class Physician;
 
-RosteringInput readData(char *argv[]){
+vector<string> split(string s, string delimiter){
+	s.substr(0, s.find(delimiter));
+	size_t pos = 0;
+	vector<string> sVector;
+	while ((pos = s.find(delimiter)) != std::string::npos) {
+	    string aux = s.substr(0, pos);
+	    sVector.push_back(aux);
+	    s.erase(0, pos + delimiter.length());
+	}
+	sVector.push_back(s);
+	return sVector;
+}
+
+RosteringInput readData(string configFile, string physicianFile, string shiftFile, string areaFile){
 	RosteringInput input;
 	//Lê o arquivo com as características dos médicos
-	readPhysiciansData(&input.physicians, argv[1]);
+	readPhysiciansData(&input.physicians, physicianFile);
 
 	//Lê o arquivo de configuração
-	readConfigData(&input.maxHoursMargin, &input.minHoursMargin, &input.maxNightShifts, &input.weeks, &input.days, argv[2]);
+
+	readConfigData(&input.maxHoursMargin, &input.minHoursMargin, &input.maxNightShifts, &input.weeks, &input.days, &input.normalization, &input.idealAndNadirPointVerification, &input.layers, &input.timePerSolution ,configFile);
 
 	//Lê o arquivo com as características dos turnos
-	readShiftsData(&input.shifts, argv[3]);
+	readShiftsData(&input.shifts, shiftFile);
 
 	//Lê o arquivo com as características das áreas do hospital
-	readAreasData(&input.areas, argv[4]);
+	readAreasData(&input.areas, areaFile);
 
 	return input;
 }
@@ -37,8 +51,8 @@ RosteringInput readData(char *argv[]){
 void printSolution(Solution solution, RosteringInput input){
 	string weekdaysName[7] = {"Mon", "Tue", "Wed", "Thur",
 									"Fri", "Sat", "Sun"};
-	for(int i = 0; i < (int) solution.softConstraints.size(); i++){
-		cout << solution.softConstraints[i].name << " constraint value: " <<  solution.softConstraints[i].value << endl;
+	for(int i = 0; i < (int) solution.realSoftConstraints.size(); i++){
+		cout << solution.realSoftConstraints[i].name << " constraint value: " <<  solution.realSoftConstraints[i].value << endl;
 	}
 
 	for (int w = 0; w < input.weeks; w++) {
@@ -82,32 +96,54 @@ void printSolution(Solution solution, RosteringInput input){
 	}
 }
 
-void printSolutionFromUserInput(vector<Solution> solutions,  RosteringInput input){
-	int solutionIndex = -1;
-	while(solutionIndex != 0){
-		cout << "Digite um índice de solução para visualizá-la (digite 0 para sair):" << endl;
+void printSolutionFromUserInput(vector<vector<Solution>> solutions,  vector<RosteringInput> inputs){
+	int solutionIndex = 0;
+	while(solutionIndex != -1){
+		cout << "Digite um conjunto de soluções para visualizá-la (digite 0 para sair):" << endl;
 		cin >> solutionIndex;
 
-		if(solutionIndex == 0)
+		solutionIndex--;
+
+		int solutionSet = 0;
+		int subtraction = 0;
+		bool found = false;
+		for(int i = 0; i < (int) solutions.size(); i++){
+			if(!found){
+				subtraction += solutions[i].size();
+			}
+			if(solutionIndex - subtraction >= 0){
+				solutionSet++;
+			}else{
+				found = true;
+			}
+		}
+		int realIndex = solutionIndex - (subtraction - solutions[solutionSet].size());
+
+		if(solutionIndex == -1)
 			return;
 
-		if(solutionIndex >= 1 && solutionIndex <= (int) solutions.size())
-			printSolution(solutions[solutionIndex - 1], input);
+		if(realIndex >= 0 && realIndex < (int) solutions[solutionSet].size()){
+			printSolution(solutions[solutionSet][realIndex], inputs[solutionSet]);
+		}
 		else
 			cout << "Solução não existe" << endl;
 
 	}
 }
 
-void enumerateSolutions(vector<Solution> solutions){
+void enumerateSolutions(vector<vector<Solution>> solutions){
+	int counter = 1;
 	for(int i = 0; i < (int) solutions.size(); i++){
-		plt::annotate(to_string(i + 1), solutions[i].softConstraints[0].value, solutions[i].softConstraints[1].value);
+		for(int j = 0; j < (int) solutions[i].size(); j++){
+			plt::annotate(to_string(counter), solutions[i][j].softConstraints[0].value, solutions[i][j].softConstraints[1].value);
+			counter++;
+		}
 	}
 }
 
 void plotSolutions(vector<Solution> solutions){
-	vector<int> xAxis;
-	vector<int> yAxis;
+	vector<double> xAxis;
+	vector<double> yAxis;
 	for(int i = 0; i < (int) solutions.size(); i++){
 		xAxis.push_back(solutions[i].softConstraints[0].value);
 		yAxis.push_back(solutions[i].softConstraints[1].value);
@@ -126,17 +162,19 @@ void plotAll(vector<vector<Solution>> solutionsArray){
 	plt::show();
 }
 
-void showScatterPlot(vector<Solution> solutions, RosteringInput input){
+void showScatterPlot(vector<vector<Solution>> solutions, vector<RosteringInput> inputs){
 	enumerateSolutions(solutions);
+
 	pid_t c_pid = fork();
+
 	if (c_pid == -1) {
 		perror("fork");
 		exit(EXIT_FAILURE);
 	} else if (c_pid > 0) {
-		plotAll({solutions});
+		plotAll(solutions);
 		wait(nullptr);
 	} else {
-		printSolutionFromUserInput(solutions, input);
+		printSolutionFromUserInput(solutions, inputs);
 		kill (getppid(), 9);
 	}
 }
@@ -226,9 +264,37 @@ vector<Solution> weightGenerator(RosteringInput input){
 	vector<Solution> solutions;
 	input.solutions = solutions;
 
+	// Inicializa os valores utilizados na normalização para que eles não interfiram
+	// nas duas primeiras soluções
+	input.idealConstraintsValues = {0, 0};
+	input.nadirConstraintsValues = {1, 1};
+
 	// inicialmente, adiciona os pesos {1, 0} e {0, 1}
 	search({1, 0}, &input, solutions);
 	search({0, 1}, &input, solutions);
+
+	if(input.idealAndNadirPointVerification){
+		input.verificationOn = true;
+		// Verifica se os pontos ideal e nadir estão realmente corretos.
+		// Fixa o valor em um eixo e otimiza o outro
+		input.solutions = {solutions[0]};
+		search({0, 1}, &input, solutions);
+
+		input.solutions = {solutions[1]};
+		search({1, 0}, &input, solutions);
+
+		input.verificationOn = false;
+	}
+
+
+	// As primeiras soluções com pesos {1, 0} e {0, 1} apresentam, obrigatoriamente
+	// os melhores e piores valores para as funções objetivo de cada restrição. Por isso
+	// já podemos definir os valores ideais e valores nadir para cada uma delas
+	input.idealConstraintsValues = {solutions[0].softConstraints[0].value,
+							   solutions[solutions.size() - 1].softConstraints[1].value};
+
+	input.nadirConstraintsValues = {solutions[solutions.size() - 1].softConstraints[0].value,
+			   	   	   	   	   solutions[0].softConstraints[1].value};
 
 	// cria uma lista de pares de pesos
 	queue<vector<vector<double>>> weightQueue;
@@ -236,7 +302,7 @@ vector<Solution> weightGenerator(RosteringInput input){
 
 	// busca por i soluções
 	int i = 2;
-	while(i < 10){
+	while(i < pow(2, input.layers) + 1){
 		// pega o primeiro par de pesos da fila
 		vector<vector<double>> weights = weightQueue.front();
 
@@ -259,23 +325,58 @@ vector<Solution> weightGenerator(RosteringInput input){
 	return solutions;
 }
 
-// TODO Pensar em uma condição de parada utilizando o número de camadas
-// TODO Tentar utilizar normalização
-// TODO Verificar se houve melhoria nas mudanças realizadas
-// TODO Variar as instâncias
-int main(int, char *argv[]) {
+
+
+// TODO alterar escala dos valores das funções objetivo para algo que possa ser interpretado
+// No overtime, pode-se armazenar o valor de overtime de cada médico, o valor total e o valor máximo
+int main() {
 	// lê as configurações de input
-	RosteringInput input = readData(argv);
+	string searchNumber;
 
-	// utiliza o gerador de pesos para obter um conjunto de soluções
-	vector<Solution> solutions = weightGenerator(input);
+	cout << "Número de buscas: ";
+	getline(cin, searchNumber);
 
-	if(solutions.size() < 1){
-		cout << "Nenhuma solução encontrada" << endl;
-		return 0;
+
+	vector<RosteringInput> inputs;
+	for(int i = 0; i < stoi(searchNumber); i++){
+		string configFile, physicianFile, shiftFile, areaFile;
+		cout << "Arquivos de configuração" << endl;
+		cout << "[Config] [Physicians] [Shifts] [Areas]" << endl;
+
+		string line;
+		getline(cin, line);
+		vector<string> configurationStrings = split(line, " ");
+		if(configurationStrings.size() == 4){
+			configFile = configurationStrings[0];
+			physicianFile = configurationStrings[1];
+			shiftFile = configurationStrings[2];
+			areaFile = configurationStrings[3];
+		}else {
+			cout << "Arquivo de configuração faltando, arquivos padrão serão utilizados" << endl;
+		}
+
+		RosteringInput input = readData(configFile, physicianFile, shiftFile, areaFile);
+		if(input.days == 0 || input.physicians.size() == 0 || input.shifts.size() == 0 || input.areas.size() == 0 ){
+			cout << "Um dos arquivos não foi encontrado" << endl;
+			i--;
+		} else{
+			inputs.push_back(input);
+		}
 	}
 
-	showScatterPlot(solutions, input);
+	vector<vector<Solution>> allSolutions;
+	for(int i = 0; i < (int) inputs.size(); i++){
+		// utiliza o gerador de pesos para obter um conjunto de soluções
+		vector<Solution> solutions = weightGenerator(inputs[i]);
+		allSolutions.push_back(solutions);
+
+		if(solutions.size() < 1){
+			cout << "Nenhuma solução encontrada" << endl;
+			return 0;
+		}
+	}
+
+	showScatterPlot(allSolutions, inputs);
 
 	return 0;
 }

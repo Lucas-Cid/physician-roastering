@@ -20,6 +20,13 @@ public:
 	int maxNightShifts;
 	int weeks;
 	int days;
+	bool normalization;
+	bool idealAndNadirPointVerification;
+	bool verificationOn;
+	int layers;
+	int timePerSolution;
+	vector<double> idealConstraintsValues;
+	vector<double> nadirConstraintsValues;
 	vector<double> weights;
 	vector<Solution> solutions;
 	RosteringInput();

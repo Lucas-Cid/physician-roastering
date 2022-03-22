@@ -7,8 +7,8 @@ using namespace std;
 class SoftConstraint {
 public:
 	string name;
-	int value;
-	SoftConstraint(string name, int value);
+	double value;
+	SoftConstraint(string name, double value);
 };
 
 #endif /* SOFTCONSTRAINT_H_ */

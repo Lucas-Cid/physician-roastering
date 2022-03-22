@@ -30,7 +30,7 @@ Solution rostering(RosteringInput input){
 	vector<Area> areas = input.areas;
 
 	//minHours é a margem inferior para a quantidade de horas trabalhadas de um médico
-	//se um médico tem um contrato de 40 horas e o minHours é 10, este médico será alocano para, no mínimo, 30 hoas (40 - 10)
+	//se um médico tem um contrato de 40 horas e o minHours é 10, este médico será alocado para, no mínimo, 30 horas (40 - 10)
 	//o mesmo vale para o maxHours, mas para o limite superior
 	int maxHoursMargin = input.maxHoursMargin, minHoursMargin = input.minHoursMargin,
 		maxNightShifts = input.maxNightShifts, weeks = input.weeks, days = input.days;
@@ -65,7 +65,6 @@ Solution rostering(RosteringInput input){
 	}
 
 	//Garante que o médico irá trabalhar um número mínimo e um máximo de horas por semana
-	//TODO ler documentação sobre os resources para utilizar nessa restrição (considerando os médicos como resources)
 	for(int p = 0; p < (int)physicians.size(); p++){
 		for(int w = 0; w < weeks; w++){
 			IloIntExpr workedHours(env);
@@ -174,40 +173,14 @@ Solution rostering(RosteringInput input){
 		}
 	}
 
-
-//	// Restrição que penaliza a inconsistência no escalonamento.
-//	// Isto é, se um médico é escalonado para um determinado dia
-//	// e turno em uma semana, mas não é escalonado para este mesmo
-//	// dia e turno na próxima semana, a função objetivo é penalizada
-//	IloIntExpr inconsistency(env);
-//	for(int p = 0; p < (int)physicians.size(); p++){
-//		IloIntExpr physicianInconsistency(env);
-//		for(int w = 0; w < weeks - 1; w++){
-//			for(int d = w*7; d < (w+1)*7; d++){
-//				for(int s = 0; s < (int)shifts.size(); s++){
-//					IloIntExpr workedShiftOnDay(env);
-//					IloIntExpr workedShiftOnDayNextWeek(env);
-//					for(int a = 0; a < (int)areas.size(); a++){
-//						for(int v = 0; v < areas[a].spots; v++){
-//							workedShiftOnDay += assignment[d][s][a][v] == p;
-//							workedShiftOnDayNextWeek = assignment[d + 7][s][a][v] == p;
-//						}
-//					}
-//					physicianInconsistency += (workedShiftOnDay >= 1 && workedShiftOnDayNextWeek < 1) == 1;
-//				}
-//			}
-//		}
-//		inconsistency += physicianInconsistency * physicianInconsistency;
-//	}
-
-
 	// Restrição que penaliza a inconsistência no escalonamento.
 	// Isto é, se um médico é escalonado para um determinado dia
 	// e turno em uma semana, mas não trabalha nesse mesmo período
 	// ao longo das outras semanas, a função objetivo é penalizada
-	IloIntExpr inconsistency(env);
+	IloNumExpr inconsistency(env);
+	IloNumExpr realInconsistency(env);
 	for(int p = 0; p < (int)physicians.size(); p++){
-		IloIntExpr physicianInconsistency(env);
+		IloNumExpr physicianInconsistency(env);
 
 		// fixa o dia e o turno e varia a semana
 		for(int weekDay = 0; weekDay < 7; weekDay++){
@@ -228,12 +201,17 @@ Solution rostering(RosteringInput input){
 			}
 		}
 		inconsistency += physicianInconsistency * physicianInconsistency;
+		realInconsistency +=  physicianInconsistency;
 	}
+	// Normalização
+	IloNumExpr normalizedInconsistency = (inconsistency - input.idealConstraintsValues[0]) /
+			(input.nadirConstraintsValues[0] - input.idealConstraintsValues[0]);
 
 	//Restrição que penaliza o cargas de trabalho diárias que ultrapassem 12 horas
-	IloIntExpr overtime(env);
+	IloNumExpr overtime(env);
+	IloNumExpr realOvertime(env);
 	for(int p = 0; p < (int)physicians.size(); p++){
-		IloIntExpr physicianOvertime(env);
+		IloNumExpr physicianOvertime(env);
 		for(int w = 0; w < weeks; w++){
 			for(int d = w*7; d < (w+1)*7; d++){
 				// Variável quer armazena as horas trabalhadas por um médico no dia d
@@ -258,13 +236,23 @@ Solution rostering(RosteringInput input){
 			}
 		}
 		overtime += physicianOvertime * physicianOvertime;
+		realOvertime += physicianOvertime;
 	}
+	// Normalização
+	IloNumExpr normalizedOvertime = (overtime - input.idealConstraintsValues[1]) /
+			(input.nadirConstraintsValues[1] - input.idealConstraintsValues[1]);
 
-    IloObjective obj = IloMinimize(env,  (input.weights[0] * inconsistency) + (input.weights[1] * overtime));
+    IloObjective obj = IloMinimize(env,  (input.weights[0] * (input.normalization ? normalizedInconsistency : inconsistency)) + (input.weights[1] * (input.normalization ? normalizedOvertime : overtime)));
 	model.add(obj);
 
-	// TODO tirar IloAnd
-    if(input.solutions.size() > 0){
+	if(input.verificationOn){
+		IloAnd softConstraintLimitExpression(env);
+		softConstraintLimitExpression.add((inconsistency <= input.solutions[0].softConstraints[0].value) &&
+										  (overtime <= input.solutions[0].softConstraints[1].value));
+		model.add(softConstraintLimitExpression);
+	}
+
+	if(input.solutions.size() > 0){
 		IloAnd softConstraintLimitExpression(env);
 		for(int i = 0; i < (int) input.solutions.size(); i++){
 			softConstraintLimitExpression.add((inconsistency < input.solutions[i].softConstraints[0].value) ||
@@ -274,11 +262,16 @@ Solution rostering(RosteringInput input){
     }
 
     IloCP cp(model);
-    cp.setParameter(IloCP::TimeLimit, 1);
+    cp.setParameter(IloCP::TimeLimit, input.timePerSolution);
+//    cp.setParameter(IloCP::LogVerbosity, IloCP::Quiet);
+
     if (cp.solve()){
     	Solution newSolution;
     	newSolution.softConstraints.push_back(SoftConstraint("Inconsistency", cp.getValue(inconsistency)));
     	newSolution.softConstraints.push_back(SoftConstraint("Overtime", cp.getValue(overtime)));
+
+    	newSolution.realSoftConstraints.push_back(SoftConstraint("Inconsistency", cp.getValue(realInconsistency)));
+    	newSolution.realSoftConstraints.push_back(SoftConstraint("Overtime", cp.getValue(realOvertime)));
 
     	vector<vector<vector<vector<int>>>> schedule;
     	for(int w = 0; w < weeks; w++){

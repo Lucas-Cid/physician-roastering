@@ -6,5 +6,10 @@ RosteringInput::RosteringInput() {
 	this->maxNightShifts = 0;
 	this->weeks = 0;
 	this->days = 0;
+	this->normalization = false;
+	this->idealAndNadirPointVerification = false;
+	this->verificationOn = false;
+	this->layers = 1;
+	this->timePerSolution = 1;
 }
 
