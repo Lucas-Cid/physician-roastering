@@ -5,30 +5,19 @@
 #include "matplotlibcpp.h"
 #include "../includes/roastering.h"
 #include "../includes/Solution.h"
+#include "../includes/Date.h"
 #include "../includes/CsvHandler.h"
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <queue>
 #include <bits/stdc++.h>
+#include "../includes/DateHandler.h"
 
 namespace plt = matplotlibcpp;
 
 using namespace std;
 class Physician;
-
-vector<string> split(string s, string delimiter){
-	s.substr(0, s.find(delimiter));
-	size_t pos = 0;
-	vector<string> sVector;
-	while ((pos = s.find(delimiter)) != std::string::npos) {
-	    string aux = s.substr(0, pos);
-	    sVector.push_back(aux);
-	    s.erase(0, pos + delimiter.length());
-	}
-	sVector.push_back(s);
-	return sVector;
-}
 
 RosteringInput readData(string configFile, string physicianFile, string shiftFile, string areaFile){
 	RosteringInput input;
@@ -37,7 +26,7 @@ RosteringInput readData(string configFile, string physicianFile, string shiftFil
 
 	//Lê o arquivo de configuração
 
-	readConfigData(&input.maxHoursMargin, &input.minHoursMargin, &input.maxNightShifts, &input.weeks, &input.days, &input.normalization, &input.idealAndNadirPointVerification, &input.layers, &input.timePerSolution ,configFile);
+	readConfigData(&input.maxHoursMargin, &input.minHoursMargin, &input.maxNightShifts, &input.days, &input.normalization, &input.idealAndNadirPointVerification, &input.layers, &input.timePerSolution ,configFile);
 
 	//Lê o arquivo com as características dos turnos
 	readShiftsData(&input.shifts, shiftFile);
@@ -49,13 +38,15 @@ RosteringInput readData(string configFile, string physicianFile, string shiftFil
 }
 
 void printSolution(Solution solution, RosteringInput input){
-	string weekdaysName[7] = {"Mon", "Tue", "Wed", "Thur",
-									"Fri", "Sat", "Sun"};
+	string weekdaysName[7] = {"Dom", "Seg", "Ter", "Qua", "Qui",
+									"Sex", "Sab"};
+	int weeks = ceil(input.days.size() / 7.0f);
+
 	for(int i = 0; i < (int) solution.realSoftConstraints.size(); i++){
 		cout << solution.realSoftConstraints[i].name << " constraint value: " <<  solution.realSoftConstraints[i].value << endl;
 	}
 
-	for (int w = 0; w < input.weeks; w++) {
+	for (int w = 0; w < weeks; w++) {
 		cout << std::endl << std::endl;
 		cout << "\t\t";
 		for (int i = 0; i < (int) input.shifts.size(); i++) {
@@ -82,8 +73,8 @@ void printSolution(Solution solution, RosteringInput input){
 					cout << k + 1 << "\t\t";
 		cout << std::endl;
 
-		for (int d = w * 7, dw = 0; d < (w + 1) * 7 || dw < 7; d++, dw++) {
-			cout << weekdaysName[dw] << "\t\t";
+		for (int d = w * 7; d < (w + 1) * 7 && d < (int) input.days.size(); d++) {
+			cout << ((input.days[d].day < 10) ? "0" : "") << input.days[d].day << "/" <<  ((input.days[d].month < 10) ? "0" : "") << input.days[d].month << " ("<< weekdaysName[input.days[d].weekDay] << ")" << "\t";
 			for (int s = 0; s < (int) input.shifts.size(); s++) {
 				for (int a = 0; a < (int) input.areas.size(); a++) {
 					for (int v = 0; v < input.areas[a].spots; v++) {
@@ -148,7 +139,7 @@ void plotSolutions(vector<Solution> solutions){
 		xAxis.push_back(solutions[i].softConstraints[0].value);
 		yAxis.push_back(solutions[i].softConstraints[1].value);
 	}
-	plt::scatter(xAxis, yAxis, 25);
+	plt::scatter(xAxis, yAxis, 50);
 }
 
 void plotAll(vector<vector<Solution>> solutionsArray){
@@ -163,7 +154,7 @@ void plotAll(vector<vector<Solution>> solutionsArray){
 }
 
 void showScatterPlot(vector<vector<Solution>> solutions, vector<RosteringInput> inputs){
-	enumerateSolutions(solutions);
+	//enumerateSolutions(solutions);
 
 	pid_t c_pid = fork();
 
@@ -242,7 +233,7 @@ void search(vector<double> weights, RosteringInput *input, vector<Solution> &sol
 	newSolution = rostering(*input);
 	if(newSolution.schedule.size() > 0){
 		// remove possíveis soluções que são dominadas pela nova solução gerada
-		removeDominatedBySolution(solutions, newSolution);
+		//removeDominatedBySolution(solutions, newSolution);
 		// insere a solução em um vetor ordenado de acordo com o valor da primeira função objetivo
 		insertSolutionOrderedVector(solutions, newSolution);
 		input->solutions = solutions;
@@ -260,47 +251,72 @@ vector<double> sumVectorsAndDivide(vector<double> vector1, vector<double> vector
 	return result;
 }
 
+// TODO pesquisar sobre algoritmo de geração de pesos generalizado
 vector<Solution> weightGenerator(RosteringInput input){
 	vector<Solution> solutions;
 	input.solutions = solutions;
+	int objectiveFunctions = 3;
+	vector<vector<double>> initialWeights;
 
 	// Inicializa os valores utilizados na normalização para que eles não interfiram
 	// nas duas primeiras soluções
-	input.idealConstraintsValues = {0, 0};
-	input.nadirConstraintsValues = {1, 1};
+	for(int i = 0; i < objectiveFunctions; i++){
+		input.idealConstraintsValues.push_back(0);
+		input.nadirConstraintsValues.push_back(1);
+	}
 
-	// inicialmente, adiciona os pesos {1, 0} e {0, 1}
-	search({1, 0}, &input, solutions);
-	search({0, 1}, &input, solutions);
+	// inicialmente, ativa somente uma função objetivo em cada busca
+	for(int i = 0; i < objectiveFunctions; i++){
+		vector<double> currentWeights;
+		for(int j = 0; j < objectiveFunctions; j++){
+			currentWeights.push_back(j == i ? 1 : 0);
+		}
+		search(currentWeights, &input, solutions);
+		initialWeights.push_back(currentWeights);
+	}
+
 
 	if(input.idealAndNadirPointVerification){
 		input.verificationOn = true;
 		// Verifica se os pontos ideal e nadir estão realmente corretos.
-		// Fixa o valor em um eixo e otimiza o outro
-		input.solutions = {solutions[0]};
-		search({0, 1}, &input, solutions);
-
-		input.solutions = {solutions[1]};
-		search({1, 0}, &input, solutions);
-
+		// Fixa o valor em um eixo e otimiza os outros
+		for(int i = 0; i < objectiveFunctions; i++){
+			vector<double> currentWeights;
+			for(int j = 0; j < objectiveFunctions; j++){
+				currentWeights.push_back(j == i ? 0 : 1);
+			}
+			input.solutions = {solutions[i]};
+			search(currentWeights, &input, solutions);
+		}
 		input.verificationOn = false;
 	}
 
 
-	// As primeiras soluções com pesos {1, 0} e {0, 1} apresentam, obrigatoriamente
+	// As primeiras soluções com pesos apresentam, obrigatoriamente
 	// os melhores e piores valores para as funções objetivo de cada restrição. Por isso
 	// já podemos definir os valores ideais e valores nadir para cada uma delas
-	input.idealConstraintsValues = {solutions[0].softConstraints[0].value,
-							   solutions[solutions.size() - 1].softConstraints[1].value};
+	for(int i = 0; i < objectiveFunctions; i++){
+		input.idealConstraintsValues[i] = solutions[i].softConstraints[i].value;
+	}
 
-	input.nadirConstraintsValues = {solutions[solutions.size() - 1].softConstraints[0].value,
-			   	   	   	   	   solutions[0].softConstraints[1].value};
+	for(int i = 0; i < objectiveFunctions; i++){
+		double worst = solutions[0].softConstraints[i].value;
+		for(int j = 1; j < (int) solutions.size(); j++){
+			if(solutions[j].softConstraints[i].value > worst)
+				worst = solutions[j].softConstraints[i].value;
+		}
+		input.nadirConstraintsValues.push_back(worst);
+	}
 
-	// cria uma lista de pares de pesos
+	// cria uma fila de pares de pesos
+	// TODO ao invés de pares, colocar apenas o trio inicial
 	queue<vector<vector<double>>> weightQueue;
-	weightQueue.push({{1, 0}, {0, 1}});
+	for(int i = 0; i < (int) initialWeights.size(); i++){
+		for(int j = i + 1; j < (int) initialWeights.size(); j++){
+			weightQueue.push({initialWeights[i], initialWeights[j]});
+		}
+	}
 
-	// busca por i soluções
 	int i = 2;
 	while(i < pow(2, input.layers) + 1){
 		// pega o primeiro par de pesos da fila
@@ -326,9 +342,9 @@ vector<Solution> weightGenerator(RosteringInput input){
 }
 
 
+// TODO implementar varíavel para cada médico que indique quantas horas ele está em haver e
+// considerar isso no escalonamento
 
-// TODO alterar escala dos valores das funções objetivo para algo que possa ser interpretado
-// No overtime, pode-se armazenar o valor de overtime de cada médico, o valor total e o valor máximo
 int main() {
 	// lê as configurações de input
 	string searchNumber;
@@ -354,9 +370,8 @@ int main() {
 		}else {
 			cout << "Arquivo de configuração faltando, arquivos padrão serão utilizados" << endl;
 		}
-
 		RosteringInput input = readData(configFile, physicianFile, shiftFile, areaFile);
-		if(input.days == 0 || input.physicians.size() == 0 || input.shifts.size() == 0 || input.areas.size() == 0 ){
+		if(input.days.size() == 0 || input.physicians.size() == 0 || input.shifts.size() == 0 || input.areas.size() == 0 ){
 			cout << "Um dos arquivos não foi encontrado" << endl;
 			i--;
 		} else{
@@ -366,7 +381,7 @@ int main() {
 
 	vector<vector<Solution>> allSolutions;
 	for(int i = 0; i < (int) inputs.size(); i++){
-		// utiliza o gerador de pesos para obter um conjunto de soluções
+//		// utiliza o gerador de pesos para obter um conjunto de soluções
 		vector<Solution> solutions = weightGenerator(inputs[i]);
 		allSolutions.push_back(solutions);
 

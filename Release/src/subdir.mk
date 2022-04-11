@@ -6,7 +6,10 @@
 CPP_SRCS += \
 ../src/Area.cpp \
 ../src/CsvHandler.cpp \
+../src/Date.cpp \
+../src/DateHandler.cpp \
 ../src/Physician.cpp \
+../src/RestrictedShift.cpp \
 ../src/RosteringInput.cpp \
 ../src/Shift.cpp \
 ../src/SoftConstraint.cpp \
@@ -17,7 +20,10 @@ CPP_SRCS += \
 OBJS += \
 ./src/Area.o \
 ./src/CsvHandler.o \
+./src/Date.o \
+./src/DateHandler.o \
 ./src/Physician.o \
+./src/RestrictedShift.o \
 ./src/RosteringInput.o \
 ./src/Shift.o \
 ./src/SoftConstraint.o \
@@ -28,7 +34,10 @@ OBJS += \
 CPP_DEPS += \
 ./src/Area.d \
 ./src/CsvHandler.d \
+./src/Date.d \
+./src/DateHandler.d \
 ./src/Physician.d \
+./src/RestrictedShift.d \
 ./src/RosteringInput.d \
 ./src/Shift.d \
 ./src/SoftConstraint.d \

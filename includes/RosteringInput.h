@@ -7,6 +7,7 @@
 #include "../includes/Area.h"
 #include "../includes/Solution.h"
 #include "../includes/SoftConstraint.h"
+#include "../includes/Date.h"
 
 
 using namespace std;
@@ -18,8 +19,7 @@ public:
 	int maxHoursMargin;
 	int minHoursMargin;
 	int maxNightShifts;
-	int weeks;
-	int days;
+	vector<Date> days;
 	bool normalization;
 	bool idealAndNadirPointVerification;
 	bool verificationOn;
