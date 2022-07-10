@@ -79,10 +79,10 @@ void readPhysiciansData(vector<Physician> *physicians, string fileName){
 	if(csv.size() == 0) return;
 
 	for(int i = 0; i < (int)csv.size(); i++){
-		Physician newPhysician = Physician(csv[i][0], stoi(csv[i][1]), stoi(csv[i][2]), csv[i][3], stoi(csv[i][4]));
+		Physician newPhysician = Physician(csv[i][0], stoi(csv[i][1]), stoi(csv[i][2]), csv[i][3], stoi(csv[i][4]), stoi(csv[i][5]), stoi(csv[i][6]));
 
-		if(csv[i].size() == 6){
-			string restrictedShiftsString = csv[i][5];
+		if(csv[i].size() == 8){
+			string restrictedShiftsString = csv[i][7];
 			vector<RestrictedShift> restrictedShifts = transformRestrictedShifts(restrictedShiftsString);
 			newPhysician.restrictedShifts = restrictedShifts;
 		}

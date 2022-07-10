@@ -122,6 +122,18 @@ void printSolutionFromUserInput(vector<vector<Solution>> solutions,  vector<Rost
 	}
 }
 
+void printWeights(vector<vector<double>> weights){
+	cout << "{ ";
+	for(int j = 0; j < (int) weights.size(); j++){
+		cout << "{ ";
+		for(int k = 0; k < (int) weights[j].size(); k++){
+			cout << weights[j][k] << " ";
+		}
+		cout << "} ";
+	}
+	cout << " }" << endl;
+}
+
 void enumerateSolutions(vector<vector<Solution>> solutions){
 	int counter = 1;
 	for(int i = 0; i < (int) solutions.size(); i++){
@@ -136,15 +148,17 @@ void plotSolutions(vector<Solution> solutions){
 	vector<double> xAxis;
 	vector<double> yAxis;
 	for(int i = 0; i < (int) solutions.size(); i++){
-		xAxis.push_back(solutions[i].softConstraints[0].value);
-		yAxis.push_back(solutions[i].softConstraints[1].value);
+		for(int j = 0; j < (int) solutions[i].softConstraints.size(); j++){
+			yAxis.push_back(solutions[i].softConstraints[j].value);
+			xAxis.push_back(i * (solutions[i].softConstraints.size() + 1) + j);
+		}
 	}
-	plt::scatter(xAxis, yAxis, 50);
+	plt::bar(xAxis, yAxis);
 }
 
 void plotAll(vector<vector<Solution>> solutionsArray){
-	plt::xlabel(solutionsArray[0][0].softConstraints[0].name);
-	plt::ylabel(solutionsArray[0][0].softConstraints[1].name);
+	plt::xlabel("Solutions");
+	plt::ylabel("Value");
 
 	for(int i = 0; i < (int) solutionsArray.size(); i++){
 		plotSolutions(solutionsArray[i]);
@@ -154,7 +168,7 @@ void plotAll(vector<vector<Solution>> solutionsArray){
 }
 
 void showScatterPlot(vector<vector<Solution>> solutions, vector<RosteringInput> inputs){
-	//enumerateSolutions(solutions);
+	enumerateSolutions(solutions);
 
 	pid_t c_pid = fork();
 
@@ -240,23 +254,80 @@ void search(vector<double> weights, RosteringInput *input, vector<Solution> &sol
 	}
 }
 
-vector<double> sumVectorsAndDivide(vector<double> vector1, vector<double> vector2, int divisor){
-	if(vector1.size() != vector2.size()){
-		return {};
+vector<double> sumVectorsAndDivide(vector<vector<double>> v, int divisor){
+	for(int i = 1; i < (int) v.size(); i++){
+		if(v[i].size() != v[i-1].size()){
+			return {};
+		}
 	}
 	vector<double> result;
-	for(int i = 0; i < (int) vector1.size(); i++){
-		result.push_back((vector1[i] + vector2[i]) / divisor);
+	for(int j = 0; j < (int) v[0].size(); j++){
+		double iValue = 0;
+
+		for(int i = 0; i < (int) v.size(); i++){
+			iValue += v[i][j];
+		}
+
+		result.push_back(iValue / divisor);
 	}
 	return result;
 }
 
-// TODO pesquisar sobre algoritmo de geração de pesos generalizado
-vector<Solution> weightGenerator(RosteringInput input){
+vector<vector<double>> weightGenerator(RosteringInput input, int dimension){
+	vector<vector<double>> generatedWeights;
+
+	// inicialmente, ativa somente um peso em cada conjunto
+	// [1, 0, 0], [0, 1, 0], [0, 0, 1]
+	for(int i = 0; i < dimension; i++){
+		vector<double> currentWeights;
+		for(int j = 0; j < dimension; j++){
+			currentWeights.push_back(j == i ? 1 : 0);
+		}
+		generatedWeights.push_back(currentWeights);
+	}
+
+	// cria uma fila de conjuntos de pesos
+	queue<vector<vector<double>>> weightQueue;
+	vector<vector<double>> weightsCombination;
+
+	// Adiciona os pesos iniciais como um item nesta fila
+	for(int i = 0; i < (int) generatedWeights.size(); i++){
+		weightsCombination.push_back(generatedWeights[i]);
+	}
+	weightQueue.push(weightsCombination);
+
+	int i = 0;
+	while(i < (pow(dimension, input.layers) - 1) / (dimension - 1)){
+		// pega o primeiro par de pesos da fila
+		vector<vector<double>> weights = weightQueue.front();
+
+		// gera novos pesos pk usando o conjunto de pesos retirado 'weights
+		vector<double> pk = sumVectorsAndDivide(weights, dimension);
+
+		// cria novos pares de pesos a partir da combinação com o novo peso gerado
+		for(int j = 0; j < (int) weights.size(); j++){
+			vector<vector<double>> newWeightsCombination;
+			newWeightsCombination.push_back(pk);
+			for(int k = 0; k < (int) weights.size(); k++){
+				if(k != j){
+					newWeightsCombination.push_back(weights[k]);
+				}
+			}
+			weightQueue.push(newWeightsCombination);
+		}
+
+		generatedWeights.push_back(pk);
+		weightQueue.pop();
+
+		i++;
+	}
+
+	return generatedWeights;
+}
+
+vector<Solution> searchAll(RosteringInput input, vector<vector<double>> weights, int objectiveFunctions){
 	vector<Solution> solutions;
 	input.solutions = solutions;
-	int objectiveFunctions = 3;
-	vector<vector<double>> initialWeights;
 
 	// Inicializa os valores utilizados na normalização para que eles não interfiram
 	// nas duas primeiras soluções
@@ -265,16 +336,11 @@ vector<Solution> weightGenerator(RosteringInput input){
 		input.nadirConstraintsValues.push_back(1);
 	}
 
-	// inicialmente, ativa somente uma função objetivo em cada busca
-	for(int i = 0; i < objectiveFunctions; i++){
-		vector<double> currentWeights;
-		for(int j = 0; j < objectiveFunctions; j++){
-			currentWeights.push_back(j == i ? 1 : 0);
-		}
-		search(currentWeights, &input, solutions);
-		initialWeights.push_back(currentWeights);
-	}
 
+	// inicialmente, faz buscas utilizando os pesos que ativem somente uma função objetivo
+	for(int i = 0; i < objectiveFunctions; i++){
+		search(weights[i], &input, solutions);
+	}
 
 	if(input.idealAndNadirPointVerification){
 		input.verificationOn = true;
@@ -296,51 +362,28 @@ vector<Solution> weightGenerator(RosteringInput input){
 	// os melhores e piores valores para as funções objetivo de cada restrição. Por isso
 	// já podemos definir os valores ideais e valores nadir para cada uma delas
 	for(int i = 0; i < objectiveFunctions; i++){
-		input.idealConstraintsValues[i] = solutions[i].softConstraints[i].value;
-	}
-
-	for(int i = 0; i < objectiveFunctions; i++){
 		double worst = solutions[0].softConstraints[i].value;
+		double best = solutions[0].softConstraints[i].value;
+
 		for(int j = 1; j < (int) solutions.size(); j++){
 			if(solutions[j].softConstraints[i].value > worst)
 				worst = solutions[j].softConstraints[i].value;
+			if(solutions[j].softConstraints[i].value < best)
+				best = solutions[j].softConstraints[i].value;
 		}
-		input.nadirConstraintsValues.push_back(worst);
+
+		input.idealConstraintsValues[i] = best;
+		input.nadirConstraintsValues[i] = worst;
 	}
 
-	// cria uma fila de pares de pesos
-	// TODO ao invés de pares, colocar apenas o trio inicial
-	queue<vector<vector<double>>> weightQueue;
-	for(int i = 0; i < (int) initialWeights.size(); i++){
-		for(int j = i + 1; j < (int) initialWeights.size(); j++){
-			weightQueue.push({initialWeights[i], initialWeights[j]});
-		}
-	}
-
-	int i = 2;
-	while(i < pow(2, input.layers) + 1){
-		// pega o primeiro par de pesos da fila
-		vector<vector<double>> weights = weightQueue.front();
-
-		// gera novos pesos pk usando o par retirado pi e pj
-		vector<double> pi = weights[0];
-		vector<double> pj = weights[1];
-		vector<double> pk = sumVectorsAndDivide(pi, pj, 2);
-
-		// busca uma solução utilizando o novo peso gerado
-		search(pk, &input, solutions);
-
-		// cria dois novos pares de pesos
-		weightQueue.push({pi, pk});
-		weightQueue.push({pj, pk});
-		weightQueue.pop();
-
-		i++;
+	for(int i = objectiveFunctions; i < (int) weights.size(); i++){
+		search(weights[i], &input, solutions);
 	}
 
 	return solutions;
 }
 
+// TODO generalizar gerador de pesos corretamente
 
 // TODO implementar varíavel para cada médico que indique quantas horas ele está em haver e
 // considerar isso no escalonamento
@@ -380,9 +423,12 @@ int main() {
 	}
 
 	vector<vector<Solution>> allSolutions;
+	int dimension = 4;
 	for(int i = 0; i < (int) inputs.size(); i++){
-//		// utiliza o gerador de pesos para obter um conjunto de soluções
-		vector<Solution> solutions = weightGenerator(inputs[i]);
+		// utiliza o gerador de pesos para obter um conjunto de soluções
+		vector<vector<double>> weights = weightGenerator(inputs[i], dimension);
+
+		vector<Solution> solutions = searchAll(inputs[i], weights, dimension);
 		allSolutions.push_back(solutions);
 
 		if(solutions.size() < 1){
@@ -390,7 +436,6 @@ int main() {
 			return 0;
 		}
 	}
-
 	showScatterPlot(allSolutions, inputs);
 
 	return 0;

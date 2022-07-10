@@ -68,7 +68,7 @@ Solution rostering(RosteringInput input){
 				bool restricted = false;
 				// Para cada dia e turno que esse médico não pode trabalhar, verifica
 				// se o dia atual é um dia restrito
-				for(int rd = 0; rd < physicians[p].restrictedShifts.size(); rd++){
+				for(int rd = 0; rd < (int) physicians[p].restrictedShifts.size(); rd++){
 					int day = physicians[p].restrictedShifts[rd].day;
 					int month = physicians[p].restrictedShifts[rd].month;
 					int shift = physicians[p].restrictedShifts[rd].shift;
@@ -77,10 +77,11 @@ Solution rostering(RosteringInput input){
 						restricted = true;
 					}
 				}
-				for(int a = 0; a < (int)areas.size(); a++){
-					for(int v = 0; v < areas[a].spots; v++){
-						if(restricted){
-							model.add(assignment[d][s][a][v] != p);
+
+				if(restricted){
+					for(int a = 0; a < (int)areas.size(); a++){
+						for(int v = 0; v < areas[a].spots; v++){
+								model.add(assignment[d][s][a][v] != p);
 						}
 					}
 				}
@@ -90,21 +91,21 @@ Solution rostering(RosteringInput input){
 
 	// TODO Ao invés de considerar semanas, considerar todos os conjuntos de 7 dias
 	// Tentar com função objetivo
-	//Garante que o médico irá trabalhar um número mínimo e um máximo de horas por semana
+	// Garante que o médico irá trabalhar um número mínimo e um máximo de horas em
+	// qualquer conjunto de 7 dias consecutivos
 	for(int p = 0; p < (int)physicians.size(); p++){
-		for(int w = 0; w < weeks; w++){
-			IloIntExpr workedHours(env);
-			for(int d = w*7; d < (w+1)*7 && d < days; d++){
+		for(int d = 0; d <= days - 7; d++){
+			IloIntExpr periodWorkedHours(env);
+			for(int w = d; w < d + 7; w++){
 				for(int s = 0; s < (int)shifts.size(); s++){
 					for(int a = 0; a < (int)areas.size(); a++){
 						for(int v = 0; v < areas[a].spots; v++){
-							//Caso um médico trabalhe em determinado turno, a quantidade de horas desse turno é somada
-							workedHours += (assignment[d][s][a][v] == p) * shifts[s].hours;
+							periodWorkedHours += (assignment[w][s][a][v] == p) * shifts[s].hours;
 						}
 					}
 				}
 			}
-			model.add(workedHours >= physicians[p].hours - minHoursMargin && workedHours <= physicians[p].hours + maxHoursMargin);
+			model.add(periodWorkedHours >= physicians[p].hours - minHoursMargin && periodWorkedHours <= physicians[p].hours + maxHoursMargin);
 		}
 	}
 
@@ -148,44 +149,6 @@ Solution rostering(RosteringInput input){
 			model.add(workedNightShifts <= maxNightShifts);
 		}
 	}
-
-	//TODO Retirar essa restrição
-	//Garante que, caso um médico trabalhe um fim de semana completo (sábado e domingo),
-	//ele não trabalhará no próximo fim de semana
-	for(int p = 0; p < (int)physicians.size(); p++){
-		for(int w = 0; w < weeks; w++){
-			IloIntExpr workedSat(env);
-			IloIntExpr workedSun(env);
-			for(int d = w*7; d < (w+1)*7 && d < days; d++){
-				for(int s = 0; s < (int)shifts.size(); s++){
-					for(int a = 0; a < (int)areas.size(); a++){
-						for(int v = 0; v < areas[a].spots; v++){
-							if(d%7 == 5)
-								workedSat += assignment[d][s][a][v] == p;
-							if(d%7 == 6)
-								workedSun += assignment[d][s][a][v] == p;
-						}
-					}
-				}
-			}
-
-			IloIntExpr weekendShifts(env);
-			if(w < weeks - 1){
-				for(int d = (w+2)*7 - 2; d < (w+2)*7 && d < days; d++){
-					for(int s = 0; s < (int)shifts.size(); s++){
-						for(int a = 0; a < (int)areas.size(); a++){
-							for(int v = 0; v < areas[a].spots; v++){
-								weekendShifts += assignment[d][s][a][v] == p;
-							}
-						}
-					}
-				}
-			}
-
-			model.add(!((workedSat >= 1) && (workedSun >= 1)) || (weekendShifts == 0));
-		}
-	}
-
 
 	// Restrição para quebra de simetria
 	for(int d = 0; d < days; d++){
@@ -234,7 +197,7 @@ Solution rostering(RosteringInput input){
 	normalizedInconsistency = (inconsistency - input.idealConstraintsValues[0]) /
 			(input.nadirConstraintsValues[0] - input.idealConstraintsValues[0]);
 
-	//Restrição que penaliza o cargas de trabalho diárias que ultrapassem 12 horas
+	//Restrição que penaliza as cargas de trabalho diárias que ultrapassem 12 horas
 	IloNumExpr overtime(env);
 	IloNumExpr normalizedOvertime;
 	IloNumExpr realOvertime(env);
@@ -269,7 +232,6 @@ Solution rostering(RosteringInput input){
 	normalizedOvertime = input.normalization ? (overtime - input.idealConstraintsValues[1]) /
 			(input.nadirConstraintsValues[1] - input.idealConstraintsValues[1]) : overtime;
 
-
 	// Restrição que penaliza as horas de trabalho mensais trabalhadas a menos ou a mais
 	IloNumExpr workDeviation(env);
 	IloNumExpr normalizedWorkDeviation;
@@ -290,10 +252,13 @@ Solution rostering(RosteringInput input){
 			}
 		}
 		IloNumExpr deviation(env);
-		deviation = (weeks * physicians[p].hours) - workedHours;
+		deviation = (
+						(weeks * physicians[p].hours) -
+						 physicians[p].hoursBank +
+						 physicians[p].dueHours
+					)
+					- workedHours;
 
-//		physicianWorkDeviation += (deviation * (deviation < 0) * -1) +
-//								  (deviation * (deviation > 0));
 		physicianWorkDeviation += IloAbs(deviation);
 
 		workDeviation += physicianWorkDeviation * physicianWorkDeviation;
@@ -302,12 +267,37 @@ Solution rostering(RosteringInput input){
 	normalizedWorkDeviation = input.normalization ? (workDeviation - input.idealConstraintsValues[2]) /
 				(input.nadirConstraintsValues[2] - input.idealConstraintsValues[2]) : workDeviation;
 
+	// Restrição que penaliza desvios na quantidade de horas em conjuntos de 7 dias
+	IloNumExpr workDistribution(env);
+	IloNumExpr normalizedWorkDistribution(env);
+	IloNumExpr realWorkDistribution(env);
+	for(int p = 0; p < (int)physicians.size(); p++){
+		IloNumExpr physicianWorkDistribution(env);
+		for(int d = 0; d <= days - 7; d++){
+			IloIntExpr periodWorkedHours(env);
+			for(int w = d; w < d + 7; w++){
+				for(int s = 0; s < (int)shifts.size(); s++){
+					for(int a = 0; a < (int)areas.size(); a++){
+						for(int v = 0; v < areas[a].spots; v++){
+							periodWorkedHours += (assignment[w][s][a][v] == p) * shifts[s].hours;
+						}
+					}
+				}
+			}
+			physicianWorkDistribution += IloAbs(periodWorkedHours - physicians[p].hours);
+		}
+		workDistribution += physicianWorkDistribution * physicianWorkDistribution;
+		realWorkDistribution += physicianWorkDistribution;
+	}
+	normalizedWorkDistribution = input.normalization ? (workDistribution - input.idealConstraintsValues[3]) /
+					(input.nadirConstraintsValues[3] - input.idealConstraintsValues[3]) : workDistribution;
 
 	if(input.verificationOn){
 		IloAnd softConstraintLimitExpression(env);
 		softConstraintLimitExpression.add((inconsistency <= input.solutions[0].softConstraints[0].value) &&
 										  (overtime <= input.solutions[0].softConstraints[1].value) &&
-										  (workDeviation <= input.solutions[0].softConstraints[2].value));
+										  (workDeviation <= input.solutions[0].softConstraints[2].value) &&
+										  (workDistribution <= input.solutions[0].softConstraints[3].value));
 		model.add(softConstraintLimitExpression);
 	}
 
@@ -316,7 +306,8 @@ Solution rostering(RosteringInput input){
 		for(int i = 0; i < (int) input.solutions.size(); i++){
 			softConstraintLimitExpression.add((inconsistency < input.solutions[i].softConstraints[0].value) ||
 											  (overtime < input.solutions[i].softConstraints[1].value) ||
-											  (workDeviation < input.solutions[i].softConstraints[2].value));
+											  (workDeviation < input.solutions[i].softConstraints[2].value) ||
+											  (workDistribution < input.solutions[i].softConstraints[3].value));
 		}
 		model.add(softConstraintLimitExpression);
     }
@@ -325,11 +316,13 @@ Solution rostering(RosteringInput input){
     if(input.normalization){
     	obj = IloMinimize(env,  (input.weights[0] * normalizedInconsistency) +
 								(input.weights[1] * normalizedOvertime) +
-								(input.weights[2] * normalizedWorkDeviation));
+								(input.weights[2] * normalizedWorkDeviation) +
+								(input.weights[3] * normalizedWorkDistribution));
     } else{
     	obj = IloMinimize(env,  (input.weights[0] * inconsistency) +
 								(input.weights[1] * overtime) +
-								(input.weights[2] * workDeviation));
+								(input.weights[2] * workDeviation) +
+								(input.weights[3] * workDistribution));
     }
 
 	model.add(obj);
@@ -344,10 +337,12 @@ Solution rostering(RosteringInput input){
     	newSolution.softConstraints.push_back(SoftConstraint("Inconsistency", cp.getValue(inconsistency)));
     	newSolution.softConstraints.push_back(SoftConstraint("Overtime", cp.getValue(overtime)));
     	newSolution.softConstraints.push_back(SoftConstraint("Work Deviation", cp.getValue(workDeviation)));
+    	newSolution.softConstraints.push_back(SoftConstraint("Work Distribution", cp.getValue(workDistribution)));
 
     	newSolution.realSoftConstraints.push_back(SoftConstraint("Inconsistency", cp.getValue(realInconsistency)));
     	newSolution.realSoftConstraints.push_back(SoftConstraint("Overtime", cp.getValue(realOvertime)));
     	newSolution.realSoftConstraints.push_back(SoftConstraint("Work Deviation", cp.getValue(realWorkDeviation)));
+    	newSolution.realSoftConstraints.push_back(SoftConstraint("Work Distribution", cp.getValue(realWorkDistribution)));
 
     	vector<vector<vector<vector<int>>>> schedule;
     	for(int w = 0; w < weeks; w++){

@@ -13,9 +13,11 @@ public:
 	int age;
 	int experienceTime;
 	int hours;
+	int dueHours;
+	int hoursBank;
 	vector<RestrictedShift> restrictedShifts;
 
-	Physician(string name, int age, int experienceTime, string specialty, int hours);
+	Physician(string name, int age, int experienceTime, string specialty, int hours, int dueHours, int hoursBank);
 };
 
 
