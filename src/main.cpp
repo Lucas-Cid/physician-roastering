@@ -42,8 +42,8 @@ void printSolution(Solution solution, RosteringInput input){
 									"Sex", "Sab"};
 	int weeks = ceil(input.days.size() / 7.0f);
 
-	for(int i = 0; i < (int) solution.realSoftConstraints.size(); i++){
-		cout << solution.realSoftConstraints[i].name << " constraint value: " <<  solution.realSoftConstraints[i].value << endl;
+	for(int i = 0; i < (int) solution.softConstraints.size(); i++){
+		cout << "Real" << solution.softConstraints[i].name << " constraint value: " <<  solution.softConstraints[i].realValue << endl;
 	}
 
 	for (int w = 0; w < weeks; w++) {
@@ -145,24 +145,49 @@ void enumerateSolutions(vector<vector<Solution>> solutions){
 }
 
 void plotSolutions(vector<Solution> solutions){
-	vector<double> xAxis;
-	vector<double> yAxis;
+	vector<string> colors = {"#413C58", "#A3C4BC", "#BEF092", "#F2C9CA"};
+	vector<string> colorArray;
+	vector<int> xLabelsIndex;
+	vector<string> xLabelsString;
+	bool plotLegend = true;
 	for(int i = 0; i < (int) solutions.size(); i++){
+		xLabelsIndex.push_back(i * (solutions[i].softConstraints.size() + 1));
+		xLabelsString.push_back(to_string(i+1));
 		for(int j = 0; j < (int) solutions[i].softConstraints.size(); j++){
-			yAxis.push_back(solutions[i].softConstraints[j].value);
-			xAxis.push_back(i * (solutions[i].softConstraints.size() + 1) + j);
+			vector<double> xAxis;
+			vector<double> yAxis;
+			int x = i * (solutions[i].softConstraints.size() + 1) + j;
+			int y = solutions[i].softConstraints[j].value;
+			xAxis.push_back(x);
+			yAxis.push_back(y);
+
+			map<string, string> m;
+			m.insert(pair<string, string>("color", colors[j]));
+
+			if(plotLegend){
+				m.insert(pair<string, string>("label", solutions[i].softConstraints[j].name));
+				if(j == (int) solutions[i].softConstraints.size() - 1){
+					plotLegend = false;
+				}
+			}
+
+			plt::bar(xAxis, yAxis, "black", "-", 1.0, m);
+			plt::text(x, y, to_string((int)(y/1000))+"k", {pair<string, string>("ha", "center")}); // @suppress("Invalid arguments")
 		}
 	}
-	plt::bar(xAxis, yAxis);
+
+	plt::xticks(xLabelsIndex, xLabelsString);
+	plt::legend();
+	plt::show();
 }
 
 void plotAll(vector<vector<Solution>> solutionsArray){
 	plt::xlabel("Solutions");
 	plt::ylabel("Value");
 
-	for(int i = 0; i < (int) solutionsArray.size(); i++){
-		plotSolutions(solutionsArray[i]);
-	}
+//	for(int i = 0; i < (int) solutionsArray.size(); i++){
+		plotSolutions(solutionsArray[0]);
+//	}
 
 	plt::show();
 }
@@ -281,7 +306,7 @@ vector<vector<double>> weightGenerator(RosteringInput input, int dimension){
 	for(int i = 0; i < dimension; i++){
 		vector<double> currentWeights;
 		for(int j = 0; j < dimension; j++){
-			currentWeights.push_back(j == i ? 1 : 0);
+			currentWeights.push_back(j == i ? 0.97 : 0.03);
 		}
 		generatedWeights.push_back(currentWeights);
 	}
@@ -390,11 +415,10 @@ vector<Solution> searchAll(RosteringInput input, vector<vector<double>> weights,
 
 int main() {
 	// lê as configurações de input
-	string searchNumber;
+	string searchNumber = "1";
 
-	cout << "Número de buscas: ";
-	getline(cin, searchNumber);
-
+//	cout << "Número de buscas: ";
+//	getline(cin, searchNumber);
 
 	vector<RosteringInput> inputs;
 	for(int i = 0; i < stoi(searchNumber); i++){
@@ -436,7 +460,11 @@ int main() {
 			return 0;
 		}
 	}
-	showScatterPlot(allSolutions, inputs);
+
+	for(int i = 0; i < allSolutions[0].size(); i++){
+		writeSolutionFile(allSolutions[0][i], inputs[0], i+1);
+	}
+//	showScatterPlot(allSolutions, inputs);
 
 	return 0;
 }

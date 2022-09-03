@@ -50,7 +50,12 @@ src/CsvHandler.o: ../src/CsvHandler.cpp ../src/../includes/CsvHandler.h \
  ../src/../includes/../includes/../includes/SoftConstraint.h \
  ../src/../includes/../includes/Date.h \
  ../src/../includes/../includes/DateHandler.h \
- ../src/../includes/../includes/../includes/Date.h
+ ../src/../includes/../includes/../includes/Date.h \
+ ../src/../includes/../includes/RosteringInput.h \
+ ../src/../includes/../includes/../includes/Physician.h \
+ ../src/../includes/../includes/../includes/Shift.h \
+ ../src/../includes/../includes/../includes/Area.h \
+ ../src/../includes/../includes/../includes/Solution.h
 
 ../src/../includes/CsvHandler.h:
 
@@ -157,3 +162,13 @@ src/CsvHandler.o: ../src/CsvHandler.cpp ../src/../includes/CsvHandler.h \
 ../src/../includes/../includes/DateHandler.h:
 
 ../src/../includes/../includes/../includes/Date.h:
+
+../src/../includes/../includes/RosteringInput.h:
+
+../src/../includes/../includes/../includes/Physician.h:
+
+../src/../includes/../includes/../includes/Shift.h:
+
+../src/../includes/../includes/../includes/Area.h:
+
+../src/../includes/../includes/../includes/Solution.h:

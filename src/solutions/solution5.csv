@@ -1,0 +1,47 @@
+	Values	Real values	Min	Max	Mean
+Inconsistent assignment over weeks	10754	404	15	35	25
+Daily workload over recomendation	1008	96	0	12	6
+Monthly workload deviation	12101	423	10	40	26
+Weekly workload deviation	66976	1004	40	96	63
+
+
+	Morning				After				Night				
+	Area1		Area2		Area1		Area2		Area1		Area2		
+	1	2	1	2	1	2	1	2	1	2	1	2	
+30/03 (Qua)	Halle	Angel	Will	Gustavo	George	Pedro	Clive	Alex	Halle	Mario	Keira	Gabriel	
+31/03 (Qui)	Will	Lucas	Gustavo	Alex	Lucas	Alex	Gustavo	Otavio	Hugh	Keira	Julia	Angel	
+01/04 (Sex)	George	Clive	Lucas	Mario	George	Otavio	Vitor	Pedro	Hugh	Halle	Clive	Pedro	
+02/04 (Sab)	Lucas	Otavio	Julia	Alex	Julia	Gustavo	Angel	Otavio	Hugh	Clive	Will	Vitor	
+03/04 (Dom)	Keira	Alex	Otavio	Mario	Otavio	Mario	Gabriel	Pedro	Will	Halle	George	Gustavo	
+04/04 (Seg)	Vitor	Otavio	Keira	Mario	Hugh	Pedro	Angel	Vitor	Clive	Gustavo	Julia	Lucas	
+05/04 (Ter)	Otavio	Pedro	George	Mario	George	Pedro	Angel	Alex	Julia	Vitor	Angel	Gabriel	
+
+
+	Morning				After				Night				
+	Area1		Area2		Area1		Area2		Area1		Area2		
+	1	2	1	2	1	2	1	2	1	2	1	2	
+06/04 (Qua)	Will	Gustavo	Keira	Pedro	Hugh	Lucas	Halle	Keira	George	Alex	Halle	Gabriel	
+07/04 (Qui)	Keira	Mario	Lucas	Otavio	Clive	Mario	Julia	Lucas	Will	Gustavo	Angel	Alex	
+08/04 (Sex)	Lucas	Mario	Halle	Otavio	Julia	Keira	Halle	Pedro	Hugh	Pedro	George	Clive	
+09/04 (Sab)	Angel	Lucas	Alex	Gabriel	Julia	Otavio	Halle	Gustavo	Clive	Otavio	Hugh	Vitor	
+10/04 (Dom)	George	Lucas	Julia	Halle	Julia	Pedro	Alex	Mario	Will	Keira	Hugh	Gustavo	
+11/04 (Seg)	Lucas	Pedro	Vitor	Mario	Angel	Mario	Vitor	Gabriel	Julia	Otavio	Clive	Gustavo	
+12/04 (Ter)	Will	Mario	Angel	Alex	Halle	Keira	Will	Alex	Angel	Gabriel	George	Vitor	
+
+
+	Morning				After				Night				
+	Area1		Area2		Area1		Area2		Area1		Area2		
+	1	2	1	2	1	2	1	2	1	2	1	2	
+13/04 (Qua)	Julia	Gustavo	Alex	Pedro	Keira	Pedro	Julia	Lucas	George	Gabriel	Hugh	Halle	
+14/04 (Qui)	Vitor	Mario	Julia	Otavio	Lucas	Mario	Keira	Pedro	Angel	Gustavo	Lucas	Alex	
+15/04 (Sex)	Clive	Otavio	George	Halle	Will	Otavio	Halle	Mario	George	Pedro	Hugh	Clive	
+16/04 (Sab)	Julia	Gustavo	Halle	Otavio	Julia	Angel	Halle	Vitor	Will	Otavio	Hugh	Pedro	
+17/04 (Dom)	George	Keira	Lucas	Gustavo	Alex	Mario	Julia	Gustavo	Will	Keira	Clive	Lucas	
+18/04 (Seg)	Hugh	Mario	Vitor	Gabriel	Alex	Mario	Angel	Gustavo	Gustavo	Gabriel	Julia	Otavio	
+19/04 (Ter)	George	Vitor	Angel	Pedro	Hugh	Pedro	George	Angel	Keira	Alex	Clive	Halle	
+
+
+	Morning				After				Night				
+	Area1		Area2		Area1		Area2		Area1		Area2		
+	1	2	1	2	1	2	1	2	1	2	1	2	
+20/04 (Qua)	Pedro	Mario	Angel	Lucas	Pedro	Mario	George	Otavio	Julia	Gabriel	Halle	Vitor	

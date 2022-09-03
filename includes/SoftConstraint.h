@@ -8,7 +8,11 @@ class SoftConstraint {
 public:
 	string name;
 	double value;
-	SoftConstraint(string name, double value);
+	double realValue;
+	double min;
+	double max;
+	double mean;
+	SoftConstraint(string name, double value, double realValue, double min, double max, double mean);
 };
 
 #endif /* SOFTCONSTRAINT_H_ */

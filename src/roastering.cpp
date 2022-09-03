@@ -2,6 +2,8 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <numeric>
+#include <algorithm>
 
 #include "../includes/Physician.h"
 #include "../includes/Shift.h"
@@ -170,6 +172,7 @@ Solution rostering(RosteringInput input){
 	IloNumExpr inconsistency(env);
 	IloNumExpr normalizedInconsistency(env);
 	IloNumExpr realInconsistency(env);
+	IloNumExprArray physicianInconsistencyArray(env);
 	for(int p = 0; p < (int)physicians.size(); p++){
 		IloNumExpr physicianInconsistency(env);
 
@@ -193,6 +196,7 @@ Solution rostering(RosteringInput input){
 		}
 		inconsistency += physicianInconsistency * physicianInconsistency;
 		realInconsistency +=  physicianInconsistency;
+		physicianInconsistencyArray.add(physicianInconsistency);
 	}
 	normalizedInconsistency = (inconsistency - input.idealConstraintsValues[0]) /
 			(input.nadirConstraintsValues[0] - input.idealConstraintsValues[0]);
@@ -201,6 +205,7 @@ Solution rostering(RosteringInput input){
 	IloNumExpr overtime(env);
 	IloNumExpr normalizedOvertime;
 	IloNumExpr realOvertime(env);
+	IloNumExprArray physicianOvertimeArray(env);
 	for(int p = 0; p < (int)physicians.size(); p++){
 		IloNumExpr physicianOvertime(env);
 		for(int w = 0; w < weeks; w++){
@@ -228,6 +233,7 @@ Solution rostering(RosteringInput input){
 		}
 		overtime += physicianOvertime * physicianOvertime;
 		realOvertime += physicianOvertime;
+		physicianOvertimeArray.add(physicianOvertime);
 	}
 	normalizedOvertime = input.normalization ? (overtime - input.idealConstraintsValues[1]) /
 			(input.nadirConstraintsValues[1] - input.idealConstraintsValues[1]) : overtime;
@@ -236,6 +242,7 @@ Solution rostering(RosteringInput input){
 	IloNumExpr workDeviation(env);
 	IloNumExpr normalizedWorkDeviation;
 	IloNumExpr realWorkDeviation(env);
+	IloNumExprArray physicianDeviationArray(env);
 	for(int p = 0; p < (int)physicians.size(); p++){
 		IloNumExpr physicianWorkDeviation(env);
 		IloIntExpr workedHours(env);
@@ -263,6 +270,7 @@ Solution rostering(RosteringInput input){
 
 		workDeviation += physicianWorkDeviation * physicianWorkDeviation;
 		realWorkDeviation += physicianWorkDeviation;
+		physicianDeviationArray.add(physicianWorkDeviation);
 	}
 	normalizedWorkDeviation = input.normalization ? (workDeviation - input.idealConstraintsValues[2]) /
 				(input.nadirConstraintsValues[2] - input.idealConstraintsValues[2]) : workDeviation;
@@ -271,6 +279,7 @@ Solution rostering(RosteringInput input){
 	IloNumExpr workDistribution(env);
 	IloNumExpr normalizedWorkDistribution(env);
 	IloNumExpr realWorkDistribution(env);
+	IloNumExprArray physicianDistributionArray(env);
 	for(int p = 0; p < (int)physicians.size(); p++){
 		IloNumExpr physicianWorkDistribution(env);
 		for(int d = 0; d <= days - 7; d++){
@@ -288,6 +297,7 @@ Solution rostering(RosteringInput input){
 		}
 		workDistribution += physicianWorkDistribution * physicianWorkDistribution;
 		realWorkDistribution += physicianWorkDistribution;
+		physicianDistributionArray.add(physicianWorkDistribution);
 	}
 	normalizedWorkDistribution = input.normalization ? (workDistribution - input.idealConstraintsValues[3]) /
 					(input.nadirConstraintsValues[3] - input.idealConstraintsValues[3]) : workDistribution;
@@ -334,15 +344,55 @@ Solution rostering(RosteringInput input){
 
     if (cp.solve()){
     	Solution newSolution;
-    	newSolution.softConstraints.push_back(SoftConstraint("Inconsistency", cp.getValue(inconsistency)));
-    	newSolution.softConstraints.push_back(SoftConstraint("Overtime", cp.getValue(overtime)));
-    	newSolution.softConstraints.push_back(SoftConstraint("Work Deviation", cp.getValue(workDeviation)));
-    	newSolution.softConstraints.push_back(SoftConstraint("Work Distribution", cp.getValue(workDistribution)));
 
-    	newSolution.realSoftConstraints.push_back(SoftConstraint("Inconsistency", cp.getValue(realInconsistency)));
-    	newSolution.realSoftConstraints.push_back(SoftConstraint("Overtime", cp.getValue(realOvertime)));
-    	newSolution.realSoftConstraints.push_back(SoftConstraint("Work Deviation", cp.getValue(realWorkDeviation)));
-    	newSolution.realSoftConstraints.push_back(SoftConstraint("Work Distribution", cp.getValue(realWorkDistribution)));
+    	vector<double> auxPhysicianInconsistencyArray;
+    	vector<double> auxPhysicianOvertimeArray;
+		vector<double> auxPhysicianDeviationArray;
+		vector<double> auxPhysicianDistributionArray;
+    	for(int i = 0; i < physicians.size(); i++){
+    		auxPhysicianInconsistencyArray.push_back(cp.getValue(physicianInconsistencyArray[i]));
+    		auxPhysicianOvertimeArray.push_back(cp.getValue(physicianOvertimeArray[i]));
+    		auxPhysicianDeviationArray.push_back(cp.getValue(physicianDeviationArray[i]));
+    		auxPhysicianDistributionArray.push_back(cp.getValue(physicianDistributionArray[i]));
+
+    	}
+
+    	newSolution.softConstraints.push_back(SoftConstraint(
+    			"Inconsistent assignment over weeks",
+    			cp.getValue(inconsistency),
+				cp.getValue(realInconsistency),
+				*min_element(auxPhysicianInconsistencyArray.begin(), auxPhysicianInconsistencyArray.end()),
+				*max_element(auxPhysicianInconsistencyArray.begin(), auxPhysicianInconsistencyArray.end()),
+				std::accumulate(auxPhysicianInconsistencyArray.begin(), auxPhysicianInconsistencyArray.end(), 0.0)/auxPhysicianInconsistencyArray.size()
+		));
+
+		newSolution.softConstraints.push_back(SoftConstraint(
+				"Daily workload over recomendation",
+				cp.getValue(overtime),
+				cp.getValue(realOvertime),
+				*min_element(auxPhysicianOvertimeArray.begin(), auxPhysicianOvertimeArray.end()),
+				*max_element(auxPhysicianOvertimeArray.begin(), auxPhysicianOvertimeArray.end()),
+				std::accumulate(auxPhysicianOvertimeArray.begin(), auxPhysicianOvertimeArray.end(), 0.0)/auxPhysicianOvertimeArray.size()
+		));
+
+		newSolution.softConstraints.push_back(SoftConstraint(
+				"Monthly workload deviation",
+				cp.getValue(workDeviation),
+				cp.getValue(realWorkDeviation),
+				*min_element(auxPhysicianDeviationArray.begin(), auxPhysicianDeviationArray.end()),
+				*max_element(auxPhysicianDeviationArray.begin(), auxPhysicianDeviationArray.end()),
+				std::accumulate(auxPhysicianDeviationArray.begin(), auxPhysicianDeviationArray.end(), 0.0)/auxPhysicianDeviationArray.size()
+		));
+
+		newSolution.softConstraints.push_back(SoftConstraint(
+				"Weekly workload deviation",
+				cp.getValue(workDistribution),
+				cp.getValue(realWorkDistribution),
+				*min_element(auxPhysicianDistributionArray.begin(), auxPhysicianDistributionArray.end()),
+				*max_element(auxPhysicianDistributionArray.begin(), auxPhysicianDistributionArray.end()),
+				std::accumulate(auxPhysicianDistributionArray.begin(), auxPhysicianDistributionArray.end(), 0.0)/auxPhysicianDistributionArray.size()
+		));
+
 
     	vector<vector<vector<vector<int>>>> schedule;
     	for(int w = 0; w < weeks; w++){

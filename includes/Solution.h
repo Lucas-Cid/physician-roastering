@@ -9,7 +9,6 @@ class Solution {
 public:
 	vector<vector<vector<vector<int>>>> schedule;
 	vector<SoftConstraint> softConstraints;
-	vector<SoftConstraint> realSoftConstraints;
 	Solution();
 };
 

@@ -12,6 +12,7 @@
 #include "../includes/Solution.h"
 #include "../includes/Date.h"
 #include "../includes/DateHandler.h"
+#include "../includes/RosteringInput.h"
 
 class Physician;
 using namespace std;
@@ -25,5 +26,7 @@ void readConfigData(int *maxHoursMargin, int *minHoursMargin, int *maxNightShift
 void readShiftsData(vector<Shift> *shifts, string fileName);
 
 void readAreasData(vector<Area> *areas, string fileName);
+
+void writeSolutionFile(Solution solution, RosteringInput input, int solutionNumber);
 
 #endif /* CSVHANDLER_H_ */

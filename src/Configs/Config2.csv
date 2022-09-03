@@ -1,2 +1,2 @@
-Min Hours,Max Hours,Número máximo de Turnos noturnos,Data de início,Data de fim,Verificação ponto ideal e nadir,Camadas,Tempo por solução (segundos)
-15,15,2,23/03/22,23/04/22,não,3,300
+Min Hours,Max Hours,Número máximo de Turnos noturnos,Data de início,Data de fim,Normalização,Verificação ponto ideal e nadir,Camadas,Tempo por solução (segundos)
+15,15,2,23/03/22,23/04/22,sim,não,2,5

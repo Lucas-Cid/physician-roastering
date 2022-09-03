@@ -27,6 +27,7 @@ vector<vector<string>> readCSV(string folder, string fileName){
 		}
 		csv.push_back(fields);
 	}
+	file.close();
 	return csv;
 }
 
@@ -133,5 +134,71 @@ void readAreasData(vector<Area> *areas, string fileName){
 		areas->push_back(Area(csv[i][0], stoi(csv[i][1])));
 	}
 
+}
+
+void writeSolutionFile(Solution solution, RosteringInput input, int solutionNumber){
+	string base = "src/solutions/";
+	string path = "solution" + to_string(solutionNumber) + ".csv";
+	ofstream file(base+path);
+
+	if(!file.good()){
+		cout << "Erro na abertura do arquivo" << endl;
+		return;
+	}
+
+	string weekdaysName[7] = {"Dom", "Seg", "Ter", "Qua", "Qui",
+									"Sex", "Sab"};
+	int weeks = ceil(input.days.size() / 7.0f);
+
+	file << "\t" << "Values" << "\t" << "Real values" << "\t" << "Min" << "\t" << "Max" << "\t" << "Mean" << endl;
+	for(int i = 0; i < (int) solution.softConstraints.size(); i++){
+		file << solution.softConstraints[i].name <<  "\t" << solution.softConstraints[i].value << "\t";
+		file << solution.softConstraints[i].realValue << "\t";
+		file << solution.softConstraints[i].min << "\t";
+		file << solution.softConstraints[i].max << "\t";
+		file << round(solution.softConstraints[i].mean) << endl;
+
+	}
+
+	for (int w = 0; w < weeks; w++) {
+		file << std::endl << std::endl;
+		file << "\t";
+		for (int i = 0; i < (int) input.shifts.size(); i++) {
+			file << input.shifts[i].name;
+			for (int j = 0; j < (int) input.areas.size(); j++)
+				for (int k = 0; k < input.areas[j].spots; k++)
+					file << "\t";
+		}
+
+		file << std::endl;
+		file << "\t";
+		for (int i = 0; i < (int) input.shifts.size(); i++) {
+			for (int i = 0; i < (int) input.areas.size(); i++) {
+				file << input.areas[i].name;
+				for (int k = 0; k < input.areas[i].spots; k++)
+					file << "\t";
+			}
+		}
+		file << std::endl;
+		file << "\t";
+		for (int i = 0; i < (int) input.shifts.size(); i++)
+			for (int j = 0; j < (int) input.areas.size(); j++)
+				for (int k = 0; k < input.areas[j].spots; k++)
+					file << k + 1 << "\t";
+		file << std::endl;
+
+		for (int d = w * 7; d < (w + 1) * 7 && d < (int) input.days.size(); d++) {
+			file << ((input.days[d].day < 10) ? "0" : "") << input.days[d].day << "/" <<  ((input.days[d].month < 10) ? "0" : "") << input.days[d].month << " ("<< weekdaysName[input.days[d].weekDay] << ")" << "\t";
+			for (int s = 0; s < (int) input.shifts.size(); s++) {
+				for (int a = 0; a < (int) input.areas.size(); a++) {
+					for (int v = 0; v < input.areas[a].spots; v++) {
+						file << input.physicians[solution.schedule[d][s][a][v]].name << "\t";
+					}
+				}
+			}
+			file << endl;
+		}
+	}
+	file.close();
 }
 
