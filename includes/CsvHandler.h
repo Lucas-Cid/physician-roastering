@@ -17,7 +17,7 @@
 class Physician;
 using namespace std;
 
-vector<vector<string>> readCSV(string folder,string fileName);
+vector<vector<string>> readCSV(string fileName);
 
 void readPhysiciansData(vector<Physician> *physicians, string fileName);
 
@@ -27,6 +27,6 @@ void readShiftsData(vector<Shift> *shifts, string fileName);
 
 void readAreasData(vector<Area> *areas, string fileName);
 
-void writeSolutionFile(Solution solution, RosteringInput input, int solutionNumber);
+void writeSolutionFile(Solution solution, RosteringInput input, string fileName);
 
 #endif /* CSVHANDLER_H_ */

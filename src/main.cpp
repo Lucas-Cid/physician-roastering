@@ -37,91 +37,6 @@ RosteringInput readData(string configFile, string physicianFile, string shiftFil
 	return input;
 }
 
-void printSolution(Solution solution, RosteringInput input){
-	string weekdaysName[7] = {"Dom", "Seg", "Ter", "Qua", "Qui",
-									"Sex", "Sab"};
-	int weeks = ceil(input.days.size() / 7.0f);
-
-	for(int i = 0; i < (int) solution.softConstraints.size(); i++){
-		cout << "Real" << solution.softConstraints[i].name << " constraint value: " <<  solution.softConstraints[i].realValue << endl;
-	}
-
-	for (int w = 0; w < weeks; w++) {
-		cout << std::endl << std::endl;
-		cout << "\t\t";
-		for (int i = 0; i < (int) input.shifts.size(); i++) {
-			cout << input.shifts[i].name;
-			for (int j = 0; j < (int) input.areas.size(); j++)
-				for (int k = 0; k < input.areas[j].spots; k++)
-					cout << "\t\t";
-		}
-
-		cout << std::endl;
-		cout << "\t\t";
-		for (int i = 0; i < (int) input.shifts.size(); i++) {
-			for (int i = 0; i < (int) input.areas.size(); i++) {
-				cout << input.areas[i].name;
-				for (int k = 0; k < input.areas[i].spots; k++)
-					cout << "\t\t";
-			}
-		}
-		cout << std::endl << std::endl;
-		cout << "\t\t";
-		for (int i = 0; i < (int) input.shifts.size(); i++)
-			for (int j = 0; j < (int) input.areas.size(); j++)
-				for (int k = 0; k < input.areas[j].spots; k++)
-					cout << k + 1 << "\t\t";
-		cout << std::endl;
-
-		for (int d = w * 7; d < (w + 1) * 7 && d < (int) input.days.size(); d++) {
-			cout << ((input.days[d].day < 10) ? "0" : "") << input.days[d].day << "/" <<  ((input.days[d].month < 10) ? "0" : "") << input.days[d].month << " ("<< weekdaysName[input.days[d].weekDay] << ")" << "\t";
-			for (int s = 0; s < (int) input.shifts.size(); s++) {
-				for (int a = 0; a < (int) input.areas.size(); a++) {
-					for (int v = 0; v < input.areas[a].spots; v++) {
-						cout << input.physicians[solution.schedule[d][s][a][v]].name << "\t\t";
-					}
-				}
-			}
-			cout << endl << endl;
-		}
-	}
-}
-
-void printSolutionFromUserInput(vector<vector<Solution>> solutions,  vector<RosteringInput> inputs){
-	int solutionIndex = 0;
-	while(solutionIndex != -1){
-		cout << "Digite um conjunto de soluções para visualizá-la (digite 0 para sair):" << endl;
-		cin >> solutionIndex;
-
-		solutionIndex--;
-
-		int solutionSet = 0;
-		int subtraction = 0;
-		bool found = false;
-		for(int i = 0; i < (int) solutions.size(); i++){
-			if(!found){
-				subtraction += solutions[i].size();
-			}
-			if(solutionIndex - subtraction >= 0){
-				solutionSet++;
-			}else{
-				found = true;
-			}
-		}
-		int realIndex = solutionIndex - (subtraction - solutions[solutionSet].size());
-
-		if(solutionIndex == -1)
-			return;
-
-		if(realIndex >= 0 && realIndex < (int) solutions[solutionSet].size()){
-			printSolution(solutions[solutionSet][realIndex], inputs[solutionSet]);
-		}
-		else
-			cout << "Solução não existe" << endl;
-
-	}
-}
-
 void printWeights(vector<vector<double>> weights){
 	cout << "{ ";
 	for(int j = 0; j < (int) weights.size(); j++){
@@ -132,81 +47,6 @@ void printWeights(vector<vector<double>> weights){
 		cout << "} ";
 	}
 	cout << " }" << endl;
-}
-
-void enumerateSolutions(vector<vector<Solution>> solutions){
-	int counter = 1;
-	for(int i = 0; i < (int) solutions.size(); i++){
-		for(int j = 0; j < (int) solutions[i].size(); j++){
-			plt::annotate(to_string(counter), solutions[i][j].softConstraints[0].value, solutions[i][j].softConstraints[1].value);
-			counter++;
-		}
-	}
-}
-
-void plotSolutions(vector<Solution> solutions){
-	vector<string> colors = {"#413C58", "#A3C4BC", "#BEF092", "#F2C9CA"};
-	vector<string> colorArray;
-	vector<int> xLabelsIndex;
-	vector<string> xLabelsString;
-	bool plotLegend = true;
-	for(int i = 0; i < (int) solutions.size(); i++){
-		xLabelsIndex.push_back(i * (solutions[i].softConstraints.size() + 1));
-		xLabelsString.push_back(to_string(i+1));
-		for(int j = 0; j < (int) solutions[i].softConstraints.size(); j++){
-			vector<double> xAxis;
-			vector<double> yAxis;
-			int x = i * (solutions[i].softConstraints.size() + 1) + j;
-			int y = solutions[i].softConstraints[j].value;
-			xAxis.push_back(x);
-			yAxis.push_back(y);
-
-			map<string, string> m;
-			m.insert(pair<string, string>("color", colors[j]));
-
-			if(plotLegend){
-				m.insert(pair<string, string>("label", solutions[i].softConstraints[j].name));
-				if(j == (int) solutions[i].softConstraints.size() - 1){
-					plotLegend = false;
-				}
-			}
-
-			plt::bar(xAxis, yAxis, "black", "-", 1.0, m);
-			plt::text(x, y, to_string((int)(y/1000))+"k", {pair<string, string>("ha", "center")}); // @suppress("Invalid arguments")
-		}
-	}
-
-	plt::xticks(xLabelsIndex, xLabelsString);
-	plt::legend();
-	plt::show();
-}
-
-void plotAll(vector<vector<Solution>> solutionsArray){
-	plt::xlabel("Solutions");
-	plt::ylabel("Value");
-
-//	for(int i = 0; i < (int) solutionsArray.size(); i++){
-		plotSolutions(solutionsArray[0]);
-//	}
-
-	plt::show();
-}
-
-void showScatterPlot(vector<vector<Solution>> solutions, vector<RosteringInput> inputs){
-	enumerateSolutions(solutions);
-
-	pid_t c_pid = fork();
-
-	if (c_pid == -1) {
-		perror("fork");
-		exit(EXIT_FAILURE);
-	} else if (c_pid > 0) {
-		plotAll(solutions);
-		wait(nullptr);
-	} else {
-		printSolutionFromUserInput(solutions, inputs);
-		kill (getppid(), 9);
-	}
 }
 
 bool compareSolutions(Solution s1, Solution s2){
@@ -277,6 +117,24 @@ void search(vector<double> weights, RosteringInput *input, vector<Solution> &sol
 		insertSolutionOrderedVector(solutions, newSolution);
 		input->solutions = solutions;
 	}
+}
+
+Solution solve(RosteringInput *input, int dimension){
+	Solution newSolution;
+
+	// Inicializa os valores utilizados na normalização para que eles não interfiram
+	// nas primeiras soluções
+	for(int i = 0; i < dimension; i++){
+		input->idealConstraintsValues.push_back(0);
+		input->nadirConstraintsValues.push_back(1);
+	}
+
+	input->idealAndNadirPointVerification = false;
+	input->normalization = false;
+
+
+	newSolution = rostering(*input);
+	return newSolution;
 }
 
 vector<double> sumVectorsAndDivide(vector<vector<double>> v, int divisor){
@@ -355,7 +213,7 @@ vector<Solution> searchAll(RosteringInput input, vector<vector<double>> weights,
 	input.solutions = solutions;
 
 	// Inicializa os valores utilizados na normalização para que eles não interfiram
-	// nas duas primeiras soluções
+	// nas primeiras soluções
 	for(int i = 0; i < objectiveFunctions; i++){
 		input.idealConstraintsValues.push_back(0);
 		input.nadirConstraintsValues.push_back(1);
@@ -408,38 +266,46 @@ vector<Solution> searchAll(RosteringInput input, vector<vector<double>> weights,
 	return solutions;
 }
 
-// TODO generalizar gerador de pesos corretamente
 
-// TODO implementar varíavel para cada médico que indique quantas horas ele está em haver e
-// considerar isso no escalonamento
-
-int main() {
+int main(int argc, char** argv) {
 	// lê as configurações de input
 	string searchNumber = "1";
-
-//	cout << "Número de buscas: ";
-//	getline(cin, searchNumber);
 
 	vector<RosteringInput> inputs;
 	for(int i = 0; i < stoi(searchNumber); i++){
 		string configFile, physicianFile, shiftFile, areaFile;
-		cout << "Arquivos de configuração" << endl;
-		cout << "[Config] [Physicians] [Shifts] [Areas]" << endl;
+		if(argc > 2){
+			if(argc >= 6){
+				configFile = argv[2];
+				physicianFile = argv[3];
+				shiftFile = argv[4];
+				areaFile = argv[5];
+			} else {
+				cout << "Invalid Arguments" << endl;
+				exit(1);
+			}
 
-		string line;
-		getline(cin, line);
-		vector<string> configurationStrings = split(line, " ");
-		if(configurationStrings.size() == 4){
-			configFile = configurationStrings[0];
-			physicianFile = configurationStrings[1];
-			shiftFile = configurationStrings[2];
-			areaFile = configurationStrings[3];
-		}else {
-			cout << "Arquivo de configuração faltando, arquivos padrão serão utilizados" << endl;
+		} else{
+			cout << "Arquivos de configuração" << endl;
+			cout << "[Config] [Physicians] [Shifts] [Areas]" << endl;
+
+			string line;
+			getline(cin, line);
+			vector<string> configurationStrings = split(line, " ");
+			if(configurationStrings.size() == 4){
+				configFile = configurationStrings[0];
+				physicianFile = configurationStrings[1];
+				shiftFile = configurationStrings[2];
+				areaFile = configurationStrings[3];
+			}else {
+				cout << "Arquivo de configuração faltando, arquivos padrão serão utilizados" << endl;
+			}
 		}
 		RosteringInput input = readData(configFile, physicianFile, shiftFile, areaFile);
 		if(input.days.size() == 0 || input.physicians.size() == 0 || input.shifts.size() == 0 || input.areas.size() == 0 ){
 			cout << "Um dos arquivos não foi encontrado" << endl;
+			if(argc > 2)
+				exit(1);
 			i--;
 		} else{
 			inputs.push_back(input);
@@ -449,10 +315,37 @@ int main() {
 	vector<vector<Solution>> allSolutions;
 	int dimension = 4;
 	for(int i = 0; i < (int) inputs.size(); i++){
-		// utiliza o gerador de pesos para obter um conjunto de soluções
-		vector<vector<double>> weights = weightGenerator(inputs[i], dimension);
+		vector<Solution> solutions;
+		if(!strcmp(argv[1], "solve")){
 
-		vector<Solution> solutions = searchAll(inputs[i], weights, dimension);
+			inputs[i].optimize = false;
+			Solution newSolution = solve(&inputs[i], dimension);
+			if(newSolution.schedule.size() > 0)
+				solutions.push_back(newSolution);
+
+		} else if(!strcmp(argv[1], "simpleOptimization")){
+
+			vector<double> weights;
+			for(int j = 0; j < dimension; j++){
+				weights.push_back(1);
+			}
+			inputs[i].optimize = true;
+			inputs[i].weights = weights;
+
+			Solution newSolution = solve(&inputs[i], dimension);
+			if(newSolution.schedule.size() > 0)
+				solutions.push_back(newSolution);
+
+		} else if(!strcmp(argv[1], "weightsOptimization")){
+			// utiliza o gerador de pesos para obter um conjunto de soluções
+			vector<vector<double>> weights = weightGenerator(inputs[i], dimension);
+			inputs[i].optimize = true;
+			solutions = searchAll(inputs[i], weights, dimension);
+
+		} else{
+			cout << "Nenhum modo de busca foi passado" << endl;
+		}
+
 		allSolutions.push_back(solutions);
 
 		if(solutions.size() < 1){
@@ -461,10 +354,14 @@ int main() {
 		}
 	}
 
-	for(int i = 0; i < allSolutions[0].size(); i++){
-		writeSolutionFile(allSolutions[0][i], inputs[0], i+1);
+	if(allSolutions[0].size() <= 1 && argc >= 7){
+		writeSolutionFile(allSolutions[0][0], inputs[0], argv[6]);
+		cout << "Solução encontrada" << endl;
+	} else{
+		for(int i = 0; i < (int) allSolutions[0].size(); i++){
+			writeSolutionFile(allSolutions[0][i], inputs[0], "src/solutions/solution"+to_string(i+1));
+		}
 	}
-//	showScatterPlot(allSolutions, inputs);
 
 	return 0;
 }

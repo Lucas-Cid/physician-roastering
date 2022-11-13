@@ -1,47 +1,47 @@
-	Values	Real values	Min	Max	Mean
-Inconsistent assignment over weeks	2828	208	8	17	13
-Daily workload over recomendation	4392	216	0	30	14
-Monthly workload deviation	12641	423	6	46	26
-Weekly workload deviation	51196	862	22	82	54
+,Values,Real values,Min,Max,Mean
+Inconsistent assignment over weeks,18180,528,20,50,33
+Daily workload over recomendation,2052,138,0,30,9
+Monthly workload deviation,22829,559,2,64,35
+Weekly workload deviation,145468,1514,74,120,95
 
 
-	Morning				After				Night				
-	Area1		Area2		Area1		Area2		Area1		Area2		
-	1	2	1	2	1	2	1	2	1	2	1	2	
-30/03 (Qua)	Will	Pedro	Hugh	Mario	Clive	Pedro	Angel	Alex	Halle	Gabriel	Hugh	Alex	
-31/03 (Qui)	Vitor	Pedro	Clive	Mario	Angel	Lucas	Will	Gustavo	Clive	Mario	Julia	Angel	
-01/04 (Sex)	Lucas	Gustavo	Halle	Gabriel	Hugh	Pedro	Keira	Lucas	Will	Otavio	Keira	Vitor	
-02/04 (Sab)	Hugh	Mario	Julia	Gustavo	Clive	Mario	Hugh	Alex	Will	Pedro	Julia	Gustavo	
-03/04 (Dom)	Angel	Otavio	George	Gabriel	Otavio	Alex	Clive	Mario	Julia	Gabriel	Halle	Angel	
-04/04 (Seg)	Gustavo	Otavio	Keira	Pedro	Clive	Lucas	George	Vitor	George	Alex	Hugh	Keira	
-05/04 (Ter)	Halle	Vitor	Julia	Pedro	Halle	Vitor	Will	Otavio	George	Otavio	Lucas	Gustavo	
+,Morning,,,,,After,,,,Night,,,
+,Pediatrics,,,Orthopaedics,,Pediatrics,,Orthopaedics,,Pediatrics,,Orthopaedics,
+,1,2,3,1,2,1,2,1,2,1,2,1,
+30/03 (Qua),Gabriel,Pedro,Mario,Keira,Gustavo,Hugh,Otavio,Vitor,Mario,Alex,Gabriel,Julia,
+31/03 (Qui),Hugh,Will,Angel,Halle,Lucas,Otavio,Mario,Keira,Gustavo,Clive,Angel,George,
+01/04 (Sex),Hugh,Will,Halle,Julia,Pedro,Will,Gustavo,Julia,Pedro,George,Clive,Lucas,
+02/04 (Sab),Hugh,Gustavo,Pedro,Halle,Alex,Keira,Vitor,Julia,Gustavo,Gabriel,Mario,Angel,
+03/04 (Dom),Hugh,Will,Halle,Vitor,Otavio,Clive,Vitor,Gustavo,Alex,Otavio,Gabriel,Lucas,
+04/04 (Seg),Julia,Halle,Angel,Gustavo,Pedro,Angel,Gustavo,Alex,Pedro,Clive,Keira,Lucas,
+05/04 (Ter),George,Julia,Otavio,Angel,Mario,Gustavo,Mario,George,Halle,Will,Vitor,Otavio,
 
 
-	Morning				After				Night				
-	Area1		Area2		Area1		Area2		Area1		Area2		
-	1	2	1	2	1	2	1	2	1	2	1	2	
-06/04 (Qua)	Alex	Pedro	Will	Mario	Angel	Gabriel	Clive	Pedro	Hugh	Halle	George	Alex	
-07/04 (Qui)	Clive	Vitor	Pedro	Mario	Will	Lucas	Angel	Gustavo	Clive	Angel	Julia	Mario	
-08/04 (Sex)	Halle	Lucas	Gustavo	Gabriel	Keira	Pedro	Hugh	Lucas	Keira	Lucas	Vitor	Otavio	
-09/04 (Sab)	Hugh	Gustavo	Julia	Mario	Hugh	Alex	Julia	Mario	Clive	Gustavo	Will	Pedro	
-10/04 (Dom)	Angel	Otavio	Halle	Vitor	George	Mario	Halle	Alex	Julia	Angel	Otavio	Gabriel	
-11/04 (Seg)	Will	Gustavo	Keira	Pedro	Clive	Vitor	Lucas	Alex	George	Alex	Hugh	Keira	
-12/04 (Ter)	Julia	Pedro	Vitor	Mario	Will	Otavio	Lucas	Pedro	Halle	Otavio	George	Gustavo	
+,Morning,,,,,After,,,,Night,,,
+,Pediatrics,,,Orthopaedics,,Pediatrics,,Orthopaedics,,Pediatrics,,Orthopaedics,
+,1,2,3,1,2,1,2,1,2,1,2,1,
+06/04 (Qua),Hugh,Julia,Lucas,Pedro,Mario,Halle,Mario,Clive,Keira,Keira,Alex,Vitor,
+07/04 (Qui),Halle,Gustavo,Otavio,George,Gabriel,George,Angel,Halle,Mario,Hugh,Clive,Gabriel,
+08/04 (Sex),Will,Julia,Otavio,Pedro,Mario,Julia,Halle,George,Angel,Will,Clive,Pedro,
+09/04 (Sab),Julia,Keira,Lucas,George,Hugh,George,Halle,Angel,Vitor,Gustavo,Alex,Hugh,
+10/04 (Dom),George,Keira,Lucas,Halle,Otavio,Lucas,Pedro,Angel,Mario,Will,Julia,Hugh,
+11/04 (Seg),Clive,Vitor,Gabriel,Keira,Alex,Lucas,Pedro,Clive,Alex,Gustavo,Alex,Gabriel,
+12/04 (Ter),Julia,Angel,Lucas,Pedro,Mario,Will,Pedro,Clive,Otavio,Gustavo,Otavio,Vitor,
 
 
-	Morning				After				Night				
-	Area1		Area2		Area1		Area2		Area1		Area2		
-	1	2	1	2	1	2	1	2	1	2	1	2	
-13/04 (Qua)	Will	Pedro	Alex	Mario	Clive	Angel	Julia	Alex	George	Halle	Hugh	Gabriel	
-14/04 (Qui)	Angel	Pedro	Clive	Vitor	Angel	Lucas	Gustavo	Pedro	Clive	Mario	Will	Julia	
-15/04 (Sex)	Angel	Gabriel	Halle	Lucas	Hugh	Lucas	Keira	Pedro	Keira	Vitor	Lucas	Otavio	
-16/04 (Sab)	Julia	Alex	Hugh	Gustavo	Angel	Pedro	Clive	Alex	Clive	Mario	Julia	Gustavo	
-17/04 (Dom)	George	Otavio	Hugh	Vitor	Halle	Otavio	Hugh	Keira	Julia	Gabriel	Halle	Angel	
-18/04 (Seg)	Keira	Pedro	Will	Otavio	Keira	Vitor	George	Alex	George	Alex	Hugh	Gustavo	
-19/04 (Ter)	Julia	Mario	Will	Vitor	Halle	Vitor	Clive	Pedro	Lucas	Otavio	George	Gustavo	
+,Morning,,,,,After,,,,Night,,,
+,Pediatrics,,,Orthopaedics,,Pediatrics,,Orthopaedics,,Pediatrics,,Orthopaedics,
+,1,2,3,1,2,1,2,1,2,1,2,1,
+13/04 (Qua),Hugh,Angel,Mario,Clive,Julia,Halle,Mario,Keira,Alex,Halle,Mario,Vitor,
+14/04 (Qui),George,Lucas,Otavio,Alex,Pedro,Gustavo,Gabriel,Hugh,Pedro,Gustavo,Otavio,Julia,
+15/04 (Sex),George,Hugh,Lucas,Clive,Vitor,Clive,Gabriel,Keira,Lucas,Will,Angel,Mario,
+16/04 (Sab),George,Hugh,Clive,Halle,Vitor,Halle,Pedro,George,Julia,George,Julia,Gabriel,
+17/04 (Dom),Hugh,Angel,Keira,Clive,Lucas,Keira,Lucas,Angel,Otavio,Otavio,Alex,Gustavo,
+18/04 (Seg),Halle,Angel,Pedro,Clive,Gabriel,Lucas,Mario,Hugh,Vitor,Julia,Alex,George,
+19/04 (Ter),Keira,Gabriel,Pedro,Gustavo,Mario,Will,Angel,Lucas,Pedro,Will,Clive,Alex,
 
 
-	Morning				After				Night				
-	Area1		Area2		Area1		Area2		Area1		Area2		
-	1	2	1	2	1	2	1	2	1	2	1	2	
-20/04 (Qua)	Hugh	Pedro	Will	Mario	Julia	Pedro	Hugh	Angel	Halle	Gabriel	George	Alex	
+,Morning,,,,,After,,,,Night,,,
+,Pediatrics,,,Orthopaedics,,Pediatrics,,Orthopaedics,,Pediatrics,,Orthopaedics,
+,1,2,3,1,2,1,2,1,2,1,2,1,
+20/04 (Qua),Halle,Vitor,Mario,Gabriel,Pedro,Halle,Mario,Julia,Lucas,Angel,Gustavo,Hugh,

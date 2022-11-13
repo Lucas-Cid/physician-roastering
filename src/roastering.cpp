@@ -45,7 +45,7 @@ Solution rostering(RosteringInput input){
 		for(int s = 0; s < (int)shifts.size(); s++){
 			assignment[d].add(IloIntVarArray2(env));
 			for(int a = 0; a < (int)areas.size(); a++){
-				assignment[d][s].add(IloIntVarArray(env, areas[a].spots, 0, physicians.size() - 1));
+				assignment[d][s].add(IloIntVarArray(env, areas[a].spots[s], 0, physicians.size() - 1));
 			}
 		}
 	}
@@ -55,7 +55,7 @@ Solution rostering(RosteringInput input){
 		for(int s = 0; s < (int)shifts.size(); s++){
 			IloIntVarArray working(env);
 			for(int a = 0; a < (int)areas.size(); a++){
-				for(int v = 0; v < (int)areas[a].spots; v++){
+				for(int v = 0; v < (int)areas[a].spots[s]; v++){
 					working.add(assignment[d][s][a][v]);
 				}
 			}
@@ -82,7 +82,7 @@ Solution rostering(RosteringInput input){
 
 				if(restricted){
 					for(int a = 0; a < (int)areas.size(); a++){
-						for(int v = 0; v < areas[a].spots; v++){
+						for(int v = 0; v < areas[a].spots[s]; v++){
 								model.add(assignment[d][s][a][v] != p);
 						}
 					}
@@ -101,7 +101,7 @@ Solution rostering(RosteringInput input){
 			for(int w = d; w < d + 7; w++){
 				for(int s = 0; s < (int)shifts.size(); s++){
 					for(int a = 0; a < (int)areas.size(); a++){
-						for(int v = 0; v < areas[a].spots; v++){
+						for(int v = 0; v < areas[a].spots[s]; v++){
 							periodWorkedHours += (assignment[w][s][a][v] == p) * shifts[s].hours;
 						}
 					}
@@ -119,14 +119,14 @@ Solution rostering(RosteringInput input){
 			for(int d = w*7; d < (w+1)*7 && d < days; d++){
 				IloIntExpr workedNightShift(env);
 				for(int a = 0; a < (int)areas.size(); a++){
-					for(int v = 0; v < areas[a].spots; v++){
+					for(int v = 0; v < areas[a].spots[shifts.size()-1]; v++){
 						workedNightShift += assignment[d][shifts.size() - 1][a][v] == p;
 					}
 				}
 				if(d != (weeks * 7)-1 && d < (days - 1)){
 					for(int shiftsWontWork = 0; shiftsWontWork < 2; shiftsWontWork++)
 						for(int areasWontWork = 0; areasWontWork < (int)areas.size(); areasWontWork++)
-							for(int spotWontWork = 0; spotWontWork < areas[areasWontWork].spots; spotWontWork++)
+							for(int spotWontWork = 0; spotWontWork < areas[areasWontWork].spots[shiftsWontWork]; spotWontWork++)
 								model.add(!(workedNightShift >= 1) || (assignment[d+1][shiftsWontWork][areasWontWork][spotWontWork] != p));
 				}
 			}
@@ -140,7 +140,7 @@ Solution rostering(RosteringInput input){
 			for(int d = w*7; d < (w+1)*7 && d < days; d++){
 				for(int s = 0; s < (int)shifts.size(); s++){
 					for(int a = 0; a < (int)areas.size(); a++){
-						for(int v = 0; v < areas[a].spots; v++){
+						for(int v = 0; v < areas[a].spots[s]; v++){
 							if(s == (int)shifts.size() - 1){
 								workedNightShifts += assignment[d][s][a][v] == p;
 							}
@@ -156,7 +156,7 @@ Solution rostering(RosteringInput input){
 	for(int d = 0; d < days; d++){
 		for(int s = 0; s < (int)shifts.size(); s++){
 			for(int a = 0; a < (int)areas.size(); a++){
-				for(int v = 0; v < (int)areas[a].spots - 1; v++){
+				for(int v = 0; v < (int)areas[a].spots[s] - 1; v++){
 					// Ao impormos esta restrição, eliminamos soluções iguais que a
 					// penas permutariam os médicos entre as vagas
 					model.add(assignment[d][s][a][v] < assignment[d][s][a][v+1]);
@@ -184,7 +184,7 @@ Solution rostering(RosteringInput input){
 				IloIntExprArray shiftsByDayAlongWeeks(env);
 				for(int w = 0; w < weeks && (weekDay + w*7) < days; w++){
 					for(int a = 0; a < (int)areas.size(); a++){
-						for(int v = 0; v < areas[a].spots; v++){
+						for(int v = 0; v < areas[a].spots[s]; v++){
 							shiftsByDayAlongWeeks.add(assignment[weekDay + w*7][s][a][v] == p);
 						}
 					}
@@ -214,7 +214,7 @@ Solution rostering(RosteringInput input){
 				IloIntExpr workedHours(env);
 				for(int s = 0; s < (int)shifts.size(); s++){
 					for(int a = 0; a < (int)areas.size(); a++){
-						for(int v = 0; v < areas[a].spots; v++){
+						for(int v = 0; v < areas[a].spots[s]; v++){
 							workedHours += (assignment[d][s][a][v] == p) * shifts[s].hours;
 						}
 					}
@@ -251,7 +251,7 @@ Solution rostering(RosteringInput input){
 				// Variável quer armazena as horas trabalhadas por um médico
 				for(int s = 0; s < (int)shifts.size(); s++){
 					for(int a = 0; a < (int)areas.size(); a++){
-						for(int v = 0; v < areas[a].spots; v++){
+						for(int v = 0; v < areas[a].spots[s]; v++){
 							workedHours += (assignment[d][s][a][v] == p) * shifts[s].hours;
 						}
 					}
@@ -287,7 +287,7 @@ Solution rostering(RosteringInput input){
 			for(int w = d; w < d + 7; w++){
 				for(int s = 0; s < (int)shifts.size(); s++){
 					for(int a = 0; a < (int)areas.size(); a++){
-						for(int v = 0; v < areas[a].spots; v++){
+						for(int v = 0; v < areas[a].spots[s]; v++){
 							periodWorkedHours += (assignment[w][s][a][v] == p) * shifts[s].hours;
 						}
 					}
@@ -322,20 +322,20 @@ Solution rostering(RosteringInput input){
 		model.add(softConstraintLimitExpression);
     }
 
-    IloObjective obj(env);
-    if(input.normalization){
-    	obj = IloMinimize(env,  (input.weights[0] * normalizedInconsistency) +
-								(input.weights[1] * normalizedOvertime) +
-								(input.weights[2] * normalizedWorkDeviation) +
-								(input.weights[3] * normalizedWorkDistribution));
-    } else{
-    	obj = IloMinimize(env,  (input.weights[0] * inconsistency) +
-								(input.weights[1] * overtime) +
-								(input.weights[2] * workDeviation) +
-								(input.weights[3] * workDistribution));
-    }
-
-	model.add(obj);
+	if(input.optimize){
+		IloObjective obj(env);
+		if(input.normalization){
+			obj = IloMinimize(env,  (input.weights[0] * normalizedInconsistency) +
+									(input.weights[1] * normalizedOvertime) +
+									(input.weights[2] * normalizedWorkDeviation) +
+									(input.weights[3] * normalizedWorkDistribution));
+		} else{
+			obj = IloMinimize(env,  (input.weights[0] * inconsistency) +
+									(input.weights[1] * overtime) +
+									(input.weights[2] * workDeviation) +
+									(input.weights[3] * workDistribution));
+		}
+	}
 
 
     IloCP cp(model);
@@ -405,7 +405,7 @@ Solution rostering(RosteringInput input){
 				  for(int a = 0; a < (int)areas.size(); a++){
 					  vector<int> aVector;
 					  schedule[d][s].push_back(aVector);
-					  for(int v = 0; v < areas[a].spots; v++){
+					  for(int v = 0; v < areas[a].spots[s]; v++){
 						  int vVector = cp.getValue(assignment[d][s][a][v]);
 						  schedule[d][s][a].push_back(vVector);
 					  }

@@ -23,6 +23,7 @@ public:
 	bool normalization;
 	bool idealAndNadirPointVerification;
 	bool verificationOn;
+	bool optimize;
 	int layers;
 	int timePerSolution;
 	vector<double> idealConstraintsValues;

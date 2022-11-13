@@ -1,9 +1,9 @@
 #include "../includes/CsvHandler.h"
+#include <algorithm>
 
-vector<vector<string>> readCSV(string folder, string fileName){
-	string base = "src/" + folder + "/";
+vector<vector<string>> readCSV(string fileName){
 	string path = fileName + ".csv";
-    ifstream file(base+path);
+    ifstream file(path);
 	string line;
 	vector<vector<string>> csv;
 	if(!file.good()){
@@ -23,6 +23,8 @@ vector<vector<string>> readCSV(string folder, string fileName){
 
 		//Lê cada célula de uma linha e coloca em um vetor
 		while (getline(s, cell,',')){
+			cell.erase(std::remove(cell.begin(), cell.end(), '\r'), cell.end());
+			cell.erase(std::remove(cell.begin(), cell.end(), '\n'), cell.end());
 			fields.push_back(cell);
 		}
 		csv.push_back(fields);
@@ -73,18 +75,20 @@ vector<RestrictedShift> transformRestrictedShifts(string restrictedShiftsString)
 }
 
 void readPhysiciansData(vector<Physician> *physicians, string fileName){
-	fileName = fileName.size() > 0 ? fileName : "Physicians";
+	fileName = fileName.size() > 0 ? fileName : "src/Physicians/Physicians";
 
-	vector<vector<string>> csv = readCSV("Physicians", fileName);
+	vector<vector<string>> csv = readCSV(fileName);
 
 	if(csv.size() == 0) return;
 
 	for(int i = 0; i < (int)csv.size(); i++){
-		Physician newPhysician = Physician(csv[i][0], stoi(csv[i][1]), stoi(csv[i][2]), csv[i][3], stoi(csv[i][4]), stoi(csv[i][5]), stoi(csv[i][6]));
+		Physician newPhysician = Physician(csv[i][0], stoi(csv[i][1].size() != 0 ? csv[i][1] : "0"), stoi(csv[i][2].size() != 0 ? csv[i][2] : "0"), csv[i][3], stoi(csv[i][4]), stoi(csv[i][5]), stoi(csv[i][6]));
 
 		if(csv[i].size() == 8){
 			string restrictedShiftsString = csv[i][7];
-			vector<RestrictedShift> restrictedShifts = transformRestrictedShifts(restrictedShiftsString);
+			vector<RestrictedShift> restrictedShifts;
+			if(restrictedShiftsString.size() != 0)
+				restrictedShifts = transformRestrictedShifts(restrictedShiftsString);
 			newPhysician.restrictedShifts = restrictedShifts;
 		}
 
@@ -93,9 +97,9 @@ void readPhysiciansData(vector<Physician> *physicians, string fileName){
 }
 
 void readConfigData(int *maxHoursMargin, int *minHoursMargin, int *maxNightShifts, vector<Date> *days, bool *normalization, bool *idealAndNadirPointVerification, int *layers, int *timePerSolution, string fileName){
-	fileName = fileName.size() > 0 ? fileName : "Config";
+	fileName = fileName.size() > 0 ? fileName : "src/Configs/Config";
 
-	vector<vector<string>> csv = readCSV("Configs", fileName);
+	vector<vector<string>> csv = readCSV(fileName);
 	if(csv.size() == 0) return;
 
 	for(int i = 0; i < (int)csv.size(); i++){
@@ -112,9 +116,9 @@ void readConfigData(int *maxHoursMargin, int *minHoursMargin, int *maxNightShift
 }
 
 void readShiftsData(vector<Shift> *shifts, string fileName){
-	fileName = fileName.size() > 0 ? fileName : "Shifts";
+	fileName = fileName.size() > 0 ? fileName : "src/Shifts/Shifts";
 
-	vector<vector<string>> csv = readCSV("Shifts", fileName);
+	vector<vector<string>> csv = readCSV(fileName);
 
 	if(csv.size() == 0) return;
 
@@ -124,25 +128,23 @@ void readShiftsData(vector<Shift> *shifts, string fileName){
 }
 
 void readAreasData(vector<Area> *areas, string fileName){
-	fileName = fileName.size() > 0 ? fileName : "Areas";
+	fileName = fileName.size() > 0 ? fileName : "src/Areas/Areas";
 
-	vector<vector<string>> csv = readCSV("Areas", fileName);
+	vector<vector<string>> csv = readCSV(fileName);
 
 	if(csv.size() == 0) return;
 
 	for(int i = 0; i < (int)csv.size(); i++){
-		areas->push_back(Area(csv[i][0], stoi(csv[i][1])));
+		areas->push_back(Area(csv[i][0], {stoi(csv[i][1]), stoi(csv[i][2]), stoi(csv[i][3])}));
 	}
 
 }
 
-void writeSolutionFile(Solution solution, RosteringInput input, int solutionNumber){
-	string base = "src/solutions/";
-	string path = "solution" + to_string(solutionNumber) + ".csv";
-	ofstream file(base+path);
-
+void writeSolutionFile(Solution solution, RosteringInput input, string fileName){
+	string path = fileName + ".csv";
+	ofstream file(path);
 	if(!file.good()){
-		cout << "Erro na abertura do arquivo" << endl;
+		cout << "Erro na abertura do arquivo de saida" << endl;
 		return;
 	}
 
@@ -150,49 +152,49 @@ void writeSolutionFile(Solution solution, RosteringInput input, int solutionNumb
 									"Sex", "Sab"};
 	int weeks = ceil(input.days.size() / 7.0f);
 
-	file << "\t" << "Values" << "\t" << "Real values" << "\t" << "Min" << "\t" << "Max" << "\t" << "Mean" << endl;
+	file << "," << "Values" << "," << "Real values" << "," << "Min" << "," << "Max" << "," << "Mean" << endl;
 	for(int i = 0; i < (int) solution.softConstraints.size(); i++){
-		file << solution.softConstraints[i].name <<  "\t" << solution.softConstraints[i].value << "\t";
-		file << solution.softConstraints[i].realValue << "\t";
-		file << solution.softConstraints[i].min << "\t";
-		file << solution.softConstraints[i].max << "\t";
+		file << solution.softConstraints[i].name <<  "," << solution.softConstraints[i].value << ",";
+		file << solution.softConstraints[i].realValue << ",";
+		file << solution.softConstraints[i].min << ",";
+		file << solution.softConstraints[i].max << ",";
 		file << round(solution.softConstraints[i].mean) << endl;
 
 	}
 
 	for (int w = 0; w < weeks; w++) {
 		file << std::endl << std::endl;
-		file << "\t";
+		file << ",";
 		for (int i = 0; i < (int) input.shifts.size(); i++) {
 			file << input.shifts[i].name;
 			for (int j = 0; j < (int) input.areas.size(); j++)
-				for (int k = 0; k < input.areas[j].spots; k++)
-					file << "\t";
+				for (int k = 0; k < input.areas[j].spots[i]; k++)
+					file << ",";
 		}
 
 		file << std::endl;
-		file << "\t";
+		file << ",";
 		for (int i = 0; i < (int) input.shifts.size(); i++) {
-			for (int i = 0; i < (int) input.areas.size(); i++) {
-				file << input.areas[i].name;
-				for (int k = 0; k < input.areas[i].spots; k++)
-					file << "\t";
+			for (int j = 0; j < (int) input.areas.size(); j++) {
+				file << input.areas[j].name;
+				for (int k = 0; k < input.areas[j].spots[i]; k++)
+					file << ",";
 			}
 		}
 		file << std::endl;
-		file << "\t";
+		file << ",";
 		for (int i = 0; i < (int) input.shifts.size(); i++)
 			for (int j = 0; j < (int) input.areas.size(); j++)
-				for (int k = 0; k < input.areas[j].spots; k++)
-					file << k + 1 << "\t";
+				for (int k = 0; k < input.areas[j].spots[i]; k++)
+					file << k + 1 << ",";
 		file << std::endl;
 
 		for (int d = w * 7; d < (w + 1) * 7 && d < (int) input.days.size(); d++) {
-			file << ((input.days[d].day < 10) ? "0" : "") << input.days[d].day << "/" <<  ((input.days[d].month < 10) ? "0" : "") << input.days[d].month << " ("<< weekdaysName[input.days[d].weekDay] << ")" << "\t";
+			file << ((input.days[d].day < 10) ? "0" : "") << input.days[d].day << "/" <<  ((input.days[d].month < 10) ? "0" : "") << input.days[d].month << " ("<< weekdaysName[input.days[d].weekDay] << ")" << ",";
 			for (int s = 0; s < (int) input.shifts.size(); s++) {
 				for (int a = 0; a < (int) input.areas.size(); a++) {
-					for (int v = 0; v < input.areas[a].spots; v++) {
-						file << input.physicians[solution.schedule[d][s][a][v]].name << "\t";
+					for (int v = 0; v < input.areas[a].spots[s]; v++) {
+						file << input.physicians[solution.schedule[d][s][a][v]].name << ",";
 					}
 				}
 			}
