@@ -3,11 +3,12 @@
 
 class Date {
 public:
-	Date(int day, int month, int year, int weekDay);
 	int day;
 	int month;
 	int year;
 	int weekDay;
+	Date();
+	Date(int day, int month, int year, int weekDay);
 };
 
 #endif /* DATE_H_ */

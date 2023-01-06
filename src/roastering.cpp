@@ -67,23 +67,11 @@ Solution rostering(RosteringInput input){
 	for(int p = 0; p < (int)physicians.size(); p++){
 		for(int d = 0; d < days; d++){
 			for(int s = 0; s < (int)shifts.size(); s++){
-				bool restricted = false;
-				// Para cada dia e turno que esse médico não pode trabalhar, verifica
-				// se o dia atual é um dia restrito
-				for(int rd = 0; rd < (int) physicians[p].restrictedShifts.size(); rd++){
-					int day = physicians[p].restrictedShifts[rd].day;
-					int month = physicians[p].restrictedShifts[rd].month;
-					int shift = physicians[p].restrictedShifts[rd].shift;
-
-					if(day == input.days[d].day && month == input.days[d].month && shift == s){
-						restricted = true;
-					}
-				}
-
+				bool restricted = !physicians[p].possiblePeriod[d].shifts[s];
 				if(restricted){
 					for(int a = 0; a < (int)areas.size(); a++){
 						for(int v = 0; v < areas[a].spots[s]; v++){
-								model.add(assignment[d][s][a][v] != p);
+							model.add(assignment[d][s][a][v] != p);
 						}
 					}
 				}
@@ -335,6 +323,7 @@ Solution rostering(RosteringInput input){
 									(input.weights[2] * workDeviation) +
 									(input.weights[3] * workDistribution));
 		}
+		model.add(obj);
 	}
 
 

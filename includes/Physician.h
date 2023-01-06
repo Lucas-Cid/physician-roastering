@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include "./RestrictedShift.h"
+#include "./PeriodRestriction.h"
 
 using namespace std;
 
@@ -15,7 +16,7 @@ public:
 	int hours;
 	int dueHours;
 	int hoursBank;
-	vector<RestrictedShift> restrictedShifts;
+	vector<PeriodRestriction> possiblePeriod;
 
 	Physician(string name, int age, int experienceTime, string specialty, int hours, int dueHours, int hoursBank);
 };

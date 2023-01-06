@@ -2,6 +2,8 @@ src/RosteringInput.o: ../src/RosteringInput.cpp \
  ../src/../includes/RosteringInput.h \
  ../src/../includes/../includes/Physician.h \
  ../src/../includes/../includes/./RestrictedShift.h \
+ ../src/../includes/../includes/./PeriodRestriction.h \
+ ../src/../includes/../includes/./../includes/Date.h \
  ../src/../includes/../includes/Shift.h \
  ../src/../includes/../includes/Area.h \
  ../src/../includes/../includes/Solution.h \
@@ -14,6 +16,10 @@ src/RosteringInput.o: ../src/RosteringInput.cpp \
 ../src/../includes/../includes/Physician.h:
 
 ../src/../includes/../includes/./RestrictedShift.h:
+
+../src/../includes/../includes/./PeriodRestriction.h:
+
+../src/../includes/../includes/./../includes/Date.h:
 
 ../src/../includes/../includes/Shift.h:
 

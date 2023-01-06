@@ -1,47 +1,47 @@
 ,Values,Real values,Min,Max,Mean
-Inconsistent assignment over weeks,18180,528,20,50,33
-Daily workload over recomendation,2052,138,0,30,9
-Monthly workload deviation,22829,559,2,64,35
-Weekly workload deviation,145468,1514,74,120,95
+Inconsistent assignment over weeks,6880,312,4,35,17
+Daily workload over recomendation,6804,258,0,36,14
+Monthly workload deviation,4906,236,1,36,13
+Weekly workload deviation,457776,2784,54,192,155
 
 
 ,Morning,,,,,After,,,,Night,,,
 ,Pediatrics,,,Orthopaedics,,Pediatrics,,Orthopaedics,,Pediatrics,,Orthopaedics,
 ,1,2,3,1,2,1,2,1,2,1,2,1,
-30/03 (Qua),Gabriel,Pedro,Mario,Keira,Gustavo,Hugh,Otavio,Vitor,Mario,Alex,Gabriel,Julia,
-31/03 (Qui),Hugh,Will,Angel,Halle,Lucas,Otavio,Mario,Keira,Gustavo,Clive,Angel,George,
-01/04 (Sex),Hugh,Will,Halle,Julia,Pedro,Will,Gustavo,Julia,Pedro,George,Clive,Lucas,
-02/04 (Sab),Hugh,Gustavo,Pedro,Halle,Alex,Keira,Vitor,Julia,Gustavo,Gabriel,Mario,Angel,
-03/04 (Dom),Hugh,Will,Halle,Vitor,Otavio,Clive,Vitor,Gustavo,Alex,Otavio,Gabriel,Lucas,
-04/04 (Seg),Julia,Halle,Angel,Gustavo,Pedro,Angel,Gustavo,Alex,Pedro,Clive,Keira,Lucas,
-05/04 (Ter),George,Julia,Otavio,Angel,Mario,Gustavo,Mario,George,Halle,Will,Vitor,Otavio,
+30/03 (Qua),Giselle,Déborah,Krisna,Ludmilla,Agostinho,Giselle,Mariana,Clarissa,Agostinho,Gustavo,Krisna,Ilanne,
+31/03 (Qui),Giselle,Déborah,Mariana,Marcos,Cristiane,Agostinho,Marcelo,Marcos,Cristiane,Mariana,Laurene,Vanessa,
+01/04 (Sex),Ludmilla,Giselle,Déborah,Mariana,Krisna,Giselle,Cristiane,AnaLuiza,Marcelo,Ludmilla,Luciana,Vanessa,
+02/04 (Sab),Juliana,Clarissa,Marcos,Cristiane,AnaLuiza,Juliana,Marcos,Clarissa,Marcelo,Clarissa,Agostinho,Juliana,
+03/04 (Dom),Marcos,Vanessa,Cristiane,Mariana,Marcelo,Déborah,Mariana,Vanessa,Marcelo,Ludmilla,Mariana,Marcos,
+04/04 (Seg),Giselle,Mariana,Agostinho,Laurene,Krisna,Mariana,Laurene,Giselle,Clarissa,Déborah,Gustavo,Laurene,
+05/04 (Ter),Ludmilla,Giselle,Luciana,Mariana,Marcelo,Luciana,Krisna,AnaLuiza,Marcelo,Luciana,Cristiane,Juliana,
 
 
 ,Morning,,,,,After,,,,Night,,,
 ,Pediatrics,,,Orthopaedics,,Pediatrics,,Orthopaedics,,Pediatrics,,Orthopaedics,
 ,1,2,3,1,2,1,2,1,2,1,2,1,
-06/04 (Qua),Hugh,Julia,Lucas,Pedro,Mario,Halle,Mario,Clive,Keira,Keira,Alex,Vitor,
-07/04 (Qui),Halle,Gustavo,Otavio,George,Gabriel,George,Angel,Halle,Mario,Hugh,Clive,Gabriel,
-08/04 (Sex),Will,Julia,Otavio,Pedro,Mario,Julia,Halle,George,Angel,Will,Clive,Pedro,
-09/04 (Sab),Julia,Keira,Lucas,George,Hugh,George,Halle,Angel,Vitor,Gustavo,Alex,Hugh,
-10/04 (Dom),George,Keira,Lucas,Halle,Otavio,Lucas,Pedro,Angel,Mario,Will,Julia,Hugh,
-11/04 (Seg),Clive,Vitor,Gabriel,Keira,Alex,Lucas,Pedro,Clive,Alex,Gustavo,Alex,Gabriel,
-12/04 (Ter),Julia,Angel,Lucas,Pedro,Mario,Will,Pedro,Clive,Otavio,Gustavo,Otavio,Vitor,
+06/04 (Qua),Mariana,Krisna,Ilanne,Giselle,AnaLuiza,Déborah,Clarissa,Ludmilla,Giselle,Gustavo,Krisna,Ilanne,
+07/04 (Qui),Giselle,AnaLuiza,Marcelo,Laurene,Cristiane,Déborah,Mariana,Cristiane,AnaLuiza,Mariana,Marcos,Vanessa,
+08/04 (Sex),Ludmilla,Giselle,Ilanne,Déborah,Mariana,Cristiane,Agostinho,Krisna,Ilanne,Ludmilla,Luciana,Agostinho,
+09/04 (Sab),Marcos,Vanessa,Cristiane,Juliana,Clarissa,Clarissa,Marcos,Juliana,Vanessa,Juliana,Clarissa,Agostinho,
+10/04 (Dom),Mariana,Déborah,Vanessa,Giselle,Mariana,Vanessa,Cristiane,Laurene,Marcos,Mariana,Marcos,Ludmilla,
+11/04 (Seg),Déborah,Mariana,Laurene,Giselle,Krisna,Giselle,Déborah,Mariana,Laurene,Gustavo,AnaLuiza,Laurene,
+12/04 (Ter),Luciana,Mariana,Agostinho,Krisna,Cristiane,Ludmilla,Giselle,Luciana,Cristiane,Luciana,Juliana,Marcelo,
 
 
 ,Morning,,,,,After,,,,Night,,,
 ,Pediatrics,,,Orthopaedics,,Pediatrics,,Orthopaedics,,Pediatrics,,Orthopaedics,
 ,1,2,3,1,2,1,2,1,2,1,2,1,
-13/04 (Qua),Hugh,Angel,Mario,Clive,Julia,Halle,Mario,Keira,Alex,Halle,Mario,Vitor,
-14/04 (Qui),George,Lucas,Otavio,Alex,Pedro,Gustavo,Gabriel,Hugh,Pedro,Gustavo,Otavio,Julia,
-15/04 (Sex),George,Hugh,Lucas,Clive,Vitor,Clive,Gabriel,Keira,Lucas,Will,Angel,Mario,
-16/04 (Sab),George,Hugh,Clive,Halle,Vitor,Halle,Pedro,George,Julia,George,Julia,Gabriel,
-17/04 (Dom),Hugh,Angel,Keira,Clive,Lucas,Keira,Lucas,Angel,Otavio,Otavio,Alex,Gustavo,
-18/04 (Seg),Halle,Angel,Pedro,Clive,Gabriel,Lucas,Mario,Hugh,Vitor,Julia,Alex,George,
-19/04 (Ter),Keira,Gabriel,Pedro,Gustavo,Mario,Will,Angel,Lucas,Pedro,Will,Clive,Alex,
+13/04 (Qua),Ludmilla,Giselle,Déborah,Mariana,Krisna,Clarissa,Ilanne,Giselle,AnaLuiza,Gustavo,Krisna,Ilanne,
+14/04 (Qui),Giselle,Mariana,Marcos,Mariana,Laurene,Mariana,Déborah,Marcos,Cristiane,Vanessa,Marcelo,AnaLuiza,
+15/04 (Sex),Ludmilla,Giselle,Cristiane,Déborah,Mariana,Krisna,Ilanne,Cristiane,Agostinho,Ludmilla,Ilanne,Agostinho,
+16/04 (Sab),Juliana,Clarissa,Gustavo,Marcos,Vanessa,Cristiane,AnaLuiza,Juliana,Clarissa,Juliana,Clarissa,Vanessa,
+17/04 (Dom),Giselle,Mariana,Agostinho,Marcos,Cristiane,Marcos,Agostinho,Gustavo,Mariana,Mariana,Marcos,Vanessa,
+18/04 (Seg),Ludmilla,Giselle,AnaLuiza,Déborah,Laurene,Laurene,Krisna,Ludmilla,Giselle,Déborah,Mariana,Gustavo,
+19/04 (Ter),Ludmilla,Giselle,Luciana,Mariana,AnaLuiza,Luciana,Marcelo,Krisna,Agostinho,Luciana,Juliana,Cristiane,
 
 
 ,Morning,,,,,After,,,,Night,,,
 ,Pediatrics,,,Orthopaedics,,Pediatrics,,Orthopaedics,,Pediatrics,,Orthopaedics,
 ,1,2,3,1,2,1,2,1,2,1,2,1,
-20/04 (Qua),Halle,Vitor,Mario,Gabriel,Pedro,Halle,Mario,Julia,Lucas,Angel,Gustavo,Hugh,
+20/04 (Qua),Ludmilla,Déborah,Krisna,Mariana,Ilanne,Clarissa,AnaLuiza,Ilanne,Marcelo,Giselle,Krisna,Gustavo,

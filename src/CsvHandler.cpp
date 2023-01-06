@@ -24,6 +24,7 @@ vector<vector<string>> readCSV(string fileName){
 		//Lê cada célula de uma linha e coloca em um vetor
 		while (getline(s, cell,',')){
 			cell.erase(std::remove(cell.begin(), cell.end(), '\r'), cell.end());
+            cell.erase(std::remove(cell.begin(), cell.end(), ' '), cell.end());
 			cell.erase(std::remove(cell.begin(), cell.end(), '\n'), cell.end());
 			fields.push_back(cell);
 		}
@@ -74,7 +75,7 @@ vector<RestrictedShift> transformRestrictedShifts(string restrictedShiftsString)
 	return restrictedShifts;
 }
 
-void readPhysiciansData(vector<Physician> *physicians, string fileName){
+void readPhysiciansData(vector<Physician> *physicians, string fileName, vector<Date> days){
 	fileName = fileName.size() > 0 ? fileName : "src/Physicians/Physicians";
 
 	vector<vector<string>> csv = readCSV(fileName);
@@ -84,13 +85,15 @@ void readPhysiciansData(vector<Physician> *physicians, string fileName){
 	for(int i = 0; i < (int)csv.size(); i++){
 		Physician newPhysician = Physician(csv[i][0], stoi(csv[i][1].size() != 0 ? csv[i][1] : "0"), stoi(csv[i][2].size() != 0 ? csv[i][2] : "0"), csv[i][3], stoi(csv[i][4]), stoi(csv[i][5]), stoi(csv[i][6]));
 
-		if(csv[i].size() == 8){
-			string restrictedShiftsString = csv[i][7];
-			vector<RestrictedShift> restrictedShifts;
-			if(restrictedShiftsString.size() != 0)
-				restrictedShifts = transformRestrictedShifts(restrictedShiftsString);
-			newPhysician.restrictedShifts = restrictedShifts;
-		}
+		string possiblePeriod = "";
+		string restrictedPeriod = "";
+
+		if(csv[i].size() >= 8)
+			restrictedPeriod = csv[i][7];
+		if(csv[i].size() >= 9)
+			possiblePeriod = csv[i][8];
+
+		newPhysician.possiblePeriod = handlePossiblePeriod(possiblePeriod, restrictedPeriod, days);
 
 		physicians->push_back(newPhysician);
 	}
