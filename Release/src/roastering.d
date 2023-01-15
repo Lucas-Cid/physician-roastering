@@ -43,8 +43,9 @@ src/roastering.o: ../src/roastering.cpp \
  /opt/ibm/ILOG/CPLEX_Studio1210/concert/include/ilconcert/iloadvcollection.h \
  /opt/ibm/ILOG/CPLEX_Studio1210/concert/include/ilconcert/ilocollectioni.h \
  ../src/../includes/Physician.h ../src/../includes/./RestrictedShift.h \
- ../src/../includes/Shift.h ../src/../includes/Area.h \
- ../src/../includes/Solution.h \
+ ../src/../includes/./PeriodRestriction.h \
+ ../src/../includes/./../includes/Date.h ../src/../includes/Shift.h \
+ ../src/../includes/Area.h ../src/../includes/Solution.h \
  ../src/../includes/../includes/SoftConstraint.h \
  ../src/../includes/RosteringInput.h \
  ../src/../includes/../includes/Physician.h \
@@ -142,6 +143,10 @@ src/roastering.o: ../src/roastering.cpp \
 ../src/../includes/Physician.h:
 
 ../src/../includes/./RestrictedShift.h:
+
+../src/../includes/./PeriodRestriction.h:
+
+../src/../includes/./../includes/Date.h:
 
 ../src/../includes/Shift.h:
 

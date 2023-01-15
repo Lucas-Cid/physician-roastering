@@ -44,6 +44,8 @@ src/CsvHandler.o: ../src/CsvHandler.cpp ../src/../includes/CsvHandler.h \
  /opt/ibm/ILOG/CPLEX_Studio1210/concert/include/ilconcert/ilocollectioni.h \
  ../src/../includes/../includes/Physician.h \
  ../src/../includes/../includes/./RestrictedShift.h \
+ ../src/../includes/../includes/./PeriodRestriction.h \
+ ../src/../includes/../includes/./../includes/Date.h \
  ../src/../includes/../includes/Shift.h \
  ../src/../includes/../includes/Area.h \
  ../src/../includes/../includes/Solution.h \
@@ -51,6 +53,7 @@ src/CsvHandler.o: ../src/CsvHandler.cpp ../src/../includes/CsvHandler.h \
  ../src/../includes/../includes/Date.h \
  ../src/../includes/../includes/DateHandler.h \
  ../src/../includes/../includes/../includes/Date.h \
+ ../src/../includes/../includes/../includes/PeriodRestriction.h \
  ../src/../includes/../includes/RosteringInput.h \
  ../src/../includes/../includes/../includes/Physician.h \
  ../src/../includes/../includes/../includes/Shift.h \
@@ -149,6 +152,10 @@ src/CsvHandler.o: ../src/CsvHandler.cpp ../src/../includes/CsvHandler.h \
 
 ../src/../includes/../includes/./RestrictedShift.h:
 
+../src/../includes/../includes/./PeriodRestriction.h:
+
+../src/../includes/../includes/./../includes/Date.h:
+
 ../src/../includes/../includes/Shift.h:
 
 ../src/../includes/../includes/Area.h:
@@ -162,6 +169,8 @@ src/CsvHandler.o: ../src/CsvHandler.cpp ../src/../includes/CsvHandler.h \
 ../src/../includes/../includes/DateHandler.h:
 
 ../src/../includes/../includes/../includes/Date.h:
+
+../src/../includes/../includes/../includes/PeriodRestriction.h:
 
 ../src/../includes/../includes/RosteringInput.h:
 

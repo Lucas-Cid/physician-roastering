@@ -8,6 +8,8 @@ CPP_SRCS += \
 ../src/CsvHandler.cpp \
 ../src/Date.cpp \
 ../src/DateHandler.cpp \
+../src/Notation.cpp \
+../src/PeriodRestriction.cpp \
 ../src/Physician.cpp \
 ../src/RestrictedShift.cpp \
 ../src/RosteringInput.cpp \
@@ -22,6 +24,8 @@ OBJS += \
 ./src/CsvHandler.o \
 ./src/Date.o \
 ./src/DateHandler.o \
+./src/Notation.o \
+./src/PeriodRestriction.o \
 ./src/Physician.o \
 ./src/RestrictedShift.o \
 ./src/RosteringInput.o \
@@ -36,6 +40,8 @@ CPP_DEPS += \
 ./src/CsvHandler.d \
 ./src/Date.d \
 ./src/DateHandler.d \
+./src/Notation.d \
+./src/PeriodRestriction.d \
 ./src/Physician.d \
 ./src/RestrictedShift.d \
 ./src/RosteringInput.d \
