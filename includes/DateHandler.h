@@ -18,6 +18,8 @@ vector<PeriodRestriction> initializePeriodRestriction(vector<Date> days, bool in
 
 vector<PeriodRestriction> handlePossiblePeriod(string possiblePeriodsString, string restrictedPeriodsString, vector<Date> days);
 
+vector<PeriodRestriction> handleAmbulatoryPeriod(string ambulatoryPeriodsString, vector<Date> days);
+
 void interpretNotation(vector<string> notationVector, vector<PeriodRestriction> &periods, bool value);
 
 #endif /* DATEHANDLER_H_ */

@@ -67,7 +67,7 @@ Solution rostering(RosteringInput input){
 	for(int p = 0; p < (int)physicians.size(); p++){
 		for(int d = 0; d < days; d++){
 			for(int s = 0; s < (int)shifts.size(); s++){
-				bool restricted = !physicians[p].possiblePeriod[d].shifts[s];
+				bool restricted = !physicians[p].possiblePeriod[d].shifts[s] || physicians[p].ambulatoryPeriod[d].shifts[s];
 				if(restricted){
 					for(int a = 0; a < (int)areas.size(); a++){
 						for(int v = 0; v < areas[a].spots[s]; v++){
@@ -79,25 +79,25 @@ Solution rostering(RosteringInput input){
 		}
 	}
 
-	// TODO Ao invés de considerar semanas, considerar todos os conjuntos de 7 dias
-	// Tentar com função objetivo
-	// Garante que o médico irá trabalhar um número mínimo e um máximo de horas em
-	// qualquer conjunto de 7 dias consecutivos
-	for(int p = 0; p < (int)physicians.size(); p++){
-		for(int d = 0; d <= days - 7; d++){
-			IloIntExpr periodWorkedHours(env);
-			for(int w = d; w < d + 7; w++){
-				for(int s = 0; s < (int)shifts.size(); s++){
-					for(int a = 0; a < (int)areas.size(); a++){
-						for(int v = 0; v < areas[a].spots[s]; v++){
-							periodWorkedHours += (assignment[w][s][a][v] == p) * shifts[s].hours;
-						}
-					}
-				}
-			}
-			model.add(periodWorkedHours >= physicians[p].hours - minHoursMargin && periodWorkedHours <= physicians[p].hours + maxHoursMargin);
-		}
-	}
+//	// Tentar com função objetivo
+//	// Garante que o médico irá trabalhar um número mínimo e um máximo de horas em
+//	// qualquer conjunto de 7 dias consecutivos
+//	for(int p = 0; p < (int)physicians.size(); p++){
+//		for(int d = 0; d <= days - 7; d++){
+//			IloIntExpr periodWorkedHours(env);
+//			for(int w = d; w < d + 7; w++){
+//				for(int s = 0; s < (int)shifts.size(); s++){
+//					periodWorkedHours += (physicians[p].ambulatoryPeriod[d].shifts[s]) * shifts[s].hours;
+//					for(int a = 0; a < (int)areas.size(); a++){
+//						for(int v = 0; v < areas[a].spots[s]; v++){
+//							periodWorkedHours += (assignment[w][s][a][v] == p) * shifts[s].hours;
+//						}
+//					}
+//				}
+//			}
+//			model.add(periodWorkedHours >= physicians[p].hours - minHoursMargin && periodWorkedHours <= physicians[p].hours + maxHoursMargin);
+//		}
+//	}
 
 
 	//Garante que caso um médico trabalhe no turno noturno, ele não irá trabalhar no
@@ -201,6 +201,7 @@ Solution rostering(RosteringInput input){
 				// Variável quer armazena as horas trabalhadas por um médico no dia d
 				IloIntExpr workedHours(env);
 				for(int s = 0; s < (int)shifts.size(); s++){
+					workedHours += (physicians[p].ambulatoryPeriod[d].shifts[s]) * shifts[s].hours;
 					for(int a = 0; a < (int)areas.size(); a++){
 						for(int v = 0; v < areas[a].spots[s]; v++){
 							workedHours += (assignment[d][s][a][v] == p) * shifts[s].hours;
@@ -241,6 +242,7 @@ Solution rostering(RosteringInput input){
 					for(int a = 0; a < (int)areas.size(); a++){
 						for(int v = 0; v < areas[a].spots[s]; v++){
 							workedHours += (assignment[d][s][a][v] == p) * shifts[s].hours;
+							workedHours += (physicians[p].ambulatoryPeriod[d].shifts[s]) * shifts[s].hours;
 						}
 					}
 				}

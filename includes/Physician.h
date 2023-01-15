@@ -17,6 +17,8 @@ public:
 	int dueHours;
 	int hoursBank;
 	vector<PeriodRestriction> possiblePeriod;
+	vector<PeriodRestriction> ambulatoryPeriod;
+
 
 	Physician(string name, int age, int experienceTime, string specialty, int hours, int dueHours, int hoursBank);
 };

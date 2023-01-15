@@ -87,13 +87,17 @@ void readPhysiciansData(vector<Physician> *physicians, string fileName, vector<D
 
 		string possiblePeriod = "";
 		string restrictedPeriod = "";
+		string ambulatoryPeriod = "";
 
 		if(csv[i].size() >= 8)
 			restrictedPeriod = csv[i][7];
 		if(csv[i].size() >= 9)
 			possiblePeriod = csv[i][8];
+		if(csv[i].size() >= 10)
+			ambulatoryPeriod = csv[i][9];
 
 		newPhysician.possiblePeriod = handlePossiblePeriod(possiblePeriod, restrictedPeriod, days);
+		newPhysician.ambulatoryPeriod = handleAmbulatoryPeriod(ambulatoryPeriod, days);
 
 		physicians->push_back(newPhysician);
 	}
