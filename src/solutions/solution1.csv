@@ -1,47 +1,49 @@
-,Values,Real values,Min,Max,Mean
-Inconsistent assignment over weeks,18180,528,20,50,33
-Daily workload over recomendation,2052,138,0,30,9
-Monthly workload deviation,22829,559,2,64,35
-Weekly workload deviation,145468,1514,74,120,95
-
-
-,Morning,,,,,After,,,,Night,,,
-,Pediatrics,,,Orthopaedics,,Pediatrics,,Orthopaedics,,Pediatrics,,Orthopaedics,
-,1,2,3,1,2,1,2,1,2,1,2,1,
-30/03 (Qua),Gabriel,Pedro,Mario,Keira,Gustavo,Hugh,Otavio,Vitor,Mario,Alex,Gabriel,Julia,
-31/03 (Qui),Hugh,Will,Angel,Halle,Lucas,Otavio,Mario,Keira,Gustavo,Clive,Angel,George,
-01/04 (Sex),Hugh,Will,Halle,Julia,Pedro,Will,Gustavo,Julia,Pedro,George,Clive,Lucas,
-02/04 (Sab),Hugh,Gustavo,Pedro,Halle,Alex,Keira,Vitor,Julia,Gustavo,Gabriel,Mario,Angel,
-03/04 (Dom),Hugh,Will,Halle,Vitor,Otavio,Clive,Vitor,Gustavo,Alex,Otavio,Gabriel,Lucas,
-04/04 (Seg),Julia,Halle,Angel,Gustavo,Pedro,Angel,Gustavo,Alex,Pedro,Clive,Keira,Lucas,
-05/04 (Ter),George,Julia,Otavio,Angel,Mario,Gustavo,Mario,George,Halle,Will,Vitor,Otavio,
-
-
-,Morning,,,,,After,,,,Night,,,
-,Pediatrics,,,Orthopaedics,,Pediatrics,,Orthopaedics,,Pediatrics,,Orthopaedics,
-,1,2,3,1,2,1,2,1,2,1,2,1,
-06/04 (Qua),Hugh,Julia,Lucas,Pedro,Mario,Halle,Mario,Clive,Keira,Keira,Alex,Vitor,
-07/04 (Qui),Halle,Gustavo,Otavio,George,Gabriel,George,Angel,Halle,Mario,Hugh,Clive,Gabriel,
-08/04 (Sex),Will,Julia,Otavio,Pedro,Mario,Julia,Halle,George,Angel,Will,Clive,Pedro,
-09/04 (Sab),Julia,Keira,Lucas,George,Hugh,George,Halle,Angel,Vitor,Gustavo,Alex,Hugh,
-10/04 (Dom),George,Keira,Lucas,Halle,Otavio,Lucas,Pedro,Angel,Mario,Will,Julia,Hugh,
-11/04 (Seg),Clive,Vitor,Gabriel,Keira,Alex,Lucas,Pedro,Clive,Alex,Gustavo,Alex,Gabriel,
-12/04 (Ter),Julia,Angel,Lucas,Pedro,Mario,Will,Pedro,Clive,Otavio,Gustavo,Otavio,Vitor,
-
-
-,Morning,,,,,After,,,,Night,,,
-,Pediatrics,,,Orthopaedics,,Pediatrics,,Orthopaedics,,Pediatrics,,Orthopaedics,
-,1,2,3,1,2,1,2,1,2,1,2,1,
-13/04 (Qua),Hugh,Angel,Mario,Clive,Julia,Halle,Mario,Keira,Alex,Halle,Mario,Vitor,
-14/04 (Qui),George,Lucas,Otavio,Alex,Pedro,Gustavo,Gabriel,Hugh,Pedro,Gustavo,Otavio,Julia,
-15/04 (Sex),George,Hugh,Lucas,Clive,Vitor,Clive,Gabriel,Keira,Lucas,Will,Angel,Mario,
-16/04 (Sab),George,Hugh,Clive,Halle,Vitor,Halle,Pedro,George,Julia,George,Julia,Gabriel,
-17/04 (Dom),Hugh,Angel,Keira,Clive,Lucas,Keira,Lucas,Angel,Otavio,Otavio,Alex,Gustavo,
-18/04 (Seg),Halle,Angel,Pedro,Clive,Gabriel,Lucas,Mario,Hugh,Vitor,Julia,Alex,George,
-19/04 (Ter),Keira,Gabriel,Pedro,Gustavo,Mario,Will,Angel,Lucas,Pedro,Will,Clive,Alex,
-
-
-,Morning,,,,,After,,,,Night,,,
-,Pediatrics,,,Orthopaedics,,Pediatrics,,Orthopaedics,,Pediatrics,,Orthopaedics,
-,1,2,3,1,2,1,2,1,2,1,2,1,
-20/04 (Qua),Halle,Vitor,Mario,Gabriel,Pedro,Halle,Mario,Julia,Lucas,Angel,Gustavo,Hugh,
+,Values,Real values,Min,Max,Mean,,,
+Inconsistent assignment over weeks,6566,310,4,29,17,,,
+Daily workload over recomendation,1008,96,0,18,5,,,
+Monthly workload deviation,33514,738,20,68,41,,,
+Weekly workload deviation,287424,2184,66,180,121,,,
+,,,,,,,,
+,,,,,,,,
+,,Qua,Qui,Sex,Sab,Dom,Seg,Ter
+,,30/03,31/03,01/04,02/04,03/04,04/04,05/04
+Enf - 1,Manhã,Ludmilla,Ludmilla,Krisna,Déborah,Cristiane,Ludmilla,Déborah
+Enf - 2,,Déborah,Laurene,Cristiane,Marcos,Agostinho,Giselle,AnaLuiza
+PA - 1,,Giselle,Marcos,Giselle,Juliana,Mariana,Krisna,Luciana
+Enf - 1,Tarde,Giselle,Ludmilla,Giselle,Mariana,Vanessa,Laurene,Marcelo
+PA - 1,,Krisna,Marcos,AnaLuiza,Juliana,Mariana,Krisna,Agostinho
+Ped - 1,Noite,Krisna,Agostinho,Luciana,Déborah,Cristiane,Gustavo,Ludmilla
+Ped - 2,,Ilanne,Marcelo,Vanessa,Clarissa,Marcelo,Mariana,Luciana
+,,,,,,,,
+,,,,,,,,
+,,Qua,Qui,Sex,Sab,Dom,Seg,Ter
+,,06/04,07/04,08/04,09/04,10/04,11/04,12/04
+Enf - 1,Manhã,Giselle,Laurene,Laurene,Ludmilla,Ludmilla,Mariana,Luciana
+Enf - 2,,Mariana,Cristiane,Marcelo,Clarissa,Ilanne,Mariana,Marcelo
+PA - 1,,Krisna,AnaLuiza,Giselle,Juliana,Mariana,Déborah,Ludmilla
+Enf - 1,Tarde,Clarissa,Marcos,Krisna,Déborah,Vanessa,Mariana,Krisna
+PA - 1,,Giselle,Déborah,Mariana,Giselle,Laurene,Déborah,Giselle
+Ped - 1,Noite,Ilanne,Marcos,Laurene,Juliana,Vanessa,Gustavo,Luciana
+Ped - 2,,Marcelo,Vanessa,Agostinho,Agostinho,Cristiane,AnaLuiza,AnaLuiza
+,,,,,,,,
+,,,,,,,,
+,,Qua,Qui,Sex,Sab,Dom,Seg,Ter
+,,13/04,14/04,15/04,16/04,17/04,18/04,19/04
+Enf - 1,Manhã,Ludmilla,Mariana,Ludmilla,Ludmilla,Agostinho,Mariana,Luciana
+Enf - 2,,Déborah,Krisna,Agostinho,Clarissa,AnaLuiza,AnaLuiza,Mariana
+PA - 1,,Agostinho,Mariana,Giselle,Juliana,Vanessa,Laurene,Krisna
+Enf - 1,Tarde,Clarissa,Cristiane,Cristiane,Juliana,Ludmilla,Mariana,Cristiane
+PA - 1,,Ilanne,Marcos,AnaLuiza,Marcelo,Agostinho,Krisna,Déborah
+Ped - 1,Noite,Giselle,Laurene,Déborah,Ilanne,Giselle,Mariana,Luciana
+Ped - 2,,Marcelo,Marcos,Vanessa,Marcelo,Cristiane,Gustavo,Cristiane
+,,,,,,,,
+,,,,,,,,
+,,Qua,,,,,,
+,,20/04,,,,,,
+Enf - 1,Manhã,Ludmilla,,,,,,
+Enf - 2,,Giselle,,,,,,
+PA - 1,,AnaLuiza,,,,,,
+Enf - 1,Tarde,Giselle,,,,,,
+PA - 1,,Clarissa,,,,,,
+Ped - 1,Noite,Giselle,,,,,,
+Ped - 2,,Gustavo,,,,,,

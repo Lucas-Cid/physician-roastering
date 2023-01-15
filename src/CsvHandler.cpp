@@ -24,6 +24,7 @@ vector<vector<string>> readCSV(string fileName){
 		//Lê cada célula de uma linha e coloca em um vetor
 		while (getline(s, cell,',')){
 			cell.erase(std::remove(cell.begin(), cell.end(), '\r'), cell.end());
+            cell.erase(std::remove(cell.begin(), cell.end(), ' '), cell.end());
 			cell.erase(std::remove(cell.begin(), cell.end(), '\n'), cell.end());
 			fields.push_back(cell);
 		}
@@ -74,7 +75,7 @@ vector<RestrictedShift> transformRestrictedShifts(string restrictedShiftsString)
 	return restrictedShifts;
 }
 
-void readPhysiciansData(vector<Physician> *physicians, string fileName){
+void readPhysiciansData(vector<Physician> *physicians, string fileName, vector<Date> days){
 	fileName = fileName.size() > 0 ? fileName : "src/Physicians/Physicians";
 
 	vector<vector<string>> csv = readCSV(fileName);
@@ -84,13 +85,15 @@ void readPhysiciansData(vector<Physician> *physicians, string fileName){
 	for(int i = 0; i < (int)csv.size(); i++){
 		Physician newPhysician = Physician(csv[i][0], stoi(csv[i][1].size() != 0 ? csv[i][1] : "0"), stoi(csv[i][2].size() != 0 ? csv[i][2] : "0"), csv[i][3], stoi(csv[i][4]), stoi(csv[i][5]), stoi(csv[i][6]));
 
-		if(csv[i].size() == 8){
-			string restrictedShiftsString = csv[i][7];
-			vector<RestrictedShift> restrictedShifts;
-			if(restrictedShiftsString.size() != 0)
-				restrictedShifts = transformRestrictedShifts(restrictedShiftsString);
-			newPhysician.restrictedShifts = restrictedShifts;
-		}
+		string possiblePeriod = "";
+		string restrictedPeriod = "";
+
+		if(csv[i].size() >= 8)
+			restrictedPeriod = csv[i][7];
+		if(csv[i].size() >= 9)
+			possiblePeriod = csv[i][8];
+
+		newPhysician.possiblePeriod = handlePossiblePeriod(possiblePeriod, restrictedPeriod, days);
 
 		physicians->push_back(newPhysician);
 	}
@@ -164,42 +167,37 @@ void writeSolutionFile(Solution solution, RosteringInput input, string fileName)
 
 	for (int w = 0; w < weeks; w++) {
 		file << std::endl << std::endl;
-		file << ",";
-		for (int i = 0; i < (int) input.shifts.size(); i++) {
-			file << input.shifts[i].name;
-			for (int j = 0; j < (int) input.areas.size(); j++)
-				for (int k = 0; k < input.areas[j].spots[i]; k++)
-					file << ",";
-		}
 
-		file << std::endl;
-		file << ",";
-		for (int i = 0; i < (int) input.shifts.size(); i++) {
-			for (int j = 0; j < (int) input.areas.size(); j++) {
-				file << input.areas[j].name;
-				for (int k = 0; k < input.areas[j].spots[i]; k++)
-					file << ",";
-			}
-		}
-		file << std::endl;
-		file << ",";
-		for (int i = 0; i < (int) input.shifts.size(); i++)
-			for (int j = 0; j < (int) input.areas.size(); j++)
-				for (int k = 0; k < input.areas[j].spots[i]; k++)
-					file << k + 1 << ",";
-		file << std::endl;
-
+		file << "," << ",";
 		for (int d = w * 7; d < (w + 1) * 7 && d < (int) input.days.size(); d++) {
-			file << ((input.days[d].day < 10) ? "0" : "") << input.days[d].day << "/" <<  ((input.days[d].month < 10) ? "0" : "") << input.days[d].month << " ("<< weekdaysName[input.days[d].weekDay] << ")" << ",";
-			for (int s = 0; s < (int) input.shifts.size(); s++) {
-				for (int a = 0; a < (int) input.areas.size(); a++) {
-					for (int v = 0; v < input.areas[a].spots[s]; v++) {
+			file << weekdaysName[input.days[d].weekDay] << ",";
+		}
+
+		file << endl << "," << ",";
+		for (int d = w * 7; d < (w + 1) * 7 && d < (int) input.days.size(); d++) {
+			file << ((input.days[d].day < 10) ? "0" : "") << input.days[d].day << "/" <<  ((input.days[d].month < 10) ? "0" : "") << input.days[d].month << ",";
+		}
+		file << endl;
+
+		for (int s = 0; s < (int) input.shifts.size(); s++) {
+			bool showShiftName = true;
+			for (int a = 0; a < (int) input.areas.size(); a++) {
+				for (int v = 0; v < input.areas[a].spots[s]; v++) {
+					file << input.areas[a].name << " - " << v + 1 << ",";
+
+					if(showShiftName){
+						file << input.shifts[s].name;
+						showShiftName = false;
+					}
+					file << ",";
+					for (int d = w * 7; d < (w + 1) * 7 && d < (int) input.days.size(); d++) {
 						file << input.physicians[solution.schedule[d][s][a][v]].name << ",";
 					}
+					file << endl;
 				}
 			}
-			file << endl;
 		}
+
 	}
 	file.close();
 }

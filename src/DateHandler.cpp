@@ -1,5 +1,5 @@
 #include "../includes/DateHandler.h"
-
+#include "../includes/Notation.h"
 #include <iostream>
 
 vector<string> split(string s, string delimiter){
@@ -48,3 +48,82 @@ vector<Date> getDaysFromRange(string begginingDateString, string endingDateStrin
 
 	return days;
 }
+
+vector<PeriodRestriction> initializePeriodRestriction(vector<Date> days, bool value){
+	vector<PeriodRestriction> periodRestrictionVector;
+	for(int i = 0; i < (int) days.size(); i++){
+		PeriodRestriction periodRestriction = PeriodRestriction(days[i].day, days[i].month, days[i].year, days[i].weekDay, value);
+		periodRestrictionVector.push_back(periodRestriction);
+	}
+
+	return periodRestrictionVector;
+}
+
+vector<PeriodRestriction> handlePossiblePeriod(string possiblePeriodsString, string restrictedPeriodsString, vector<Date> days){
+	vector<string> possiblePeriods = split(possiblePeriodsString, ";");
+	vector<string> restrictedPeriods = split(restrictedPeriodsString, ";");
+
+	bool initializeValue = true;
+	if(possiblePeriodsString.size() > 0)
+		initializeValue = false;
+
+	vector<PeriodRestriction> periods = initializePeriodRestriction(days, initializeValue);
+
+
+	//inicializa finais de semana como períodos possíveis
+	for(int d = 0; d < (int) periods.size(); d++){
+		// Começa em 0
+		int weekDay = periods[d].date.weekDay + 1;
+		if(weekDay == 1 || weekDay == 7){
+			for(int s = 0; s < (int) periods[d].shifts.size(); s++){
+				periods[d].shifts[s] = true;
+			}
+		}
+	}
+
+	if(possiblePeriodsString.size() > 0)
+		interpretNotation(possiblePeriods, periods, true);
+	if(restrictedPeriodsString.size() > 0)
+		interpretNotation(restrictedPeriods, periods, false);
+
+	return periods;
+}
+
+void interpretNotation(vector<string> notationVector, vector<PeriodRestriction> &periods, bool value){
+	// TODO Adicionar regex para verificar se a notação é válida
+	// Para cada período indicado
+	for(int i = 0; i < (int) notationVector.size(); i++){
+		// Traduz a notação em uma classe
+		Notation notation = Notation(notationVector[i]);
+		int counter = 0;
+		// Varre todos os dias do cronograma e verifica se ele corresponde ao dia da notação
+		for(int d = 0; d < (int) periods.size(); d++){
+			// A notação pode indicar um dia específico ou um dia da semana
+			bool sameDay = periods[d].date.day == notation.day;
+			bool sameWeekDay = periods[d].date.weekDay == notation.weekDay - 1;
+
+			// Verifica se o dia atual corresponde ao dia desejado, caso este tenha sido indicado
+			bool dayRestricted = sameDay || sameWeekDay || (!notation.day && !notation.weekDay);
+
+			if(dayRestricted){
+				counter++;
+				if(!notation.recurrency || counter == notation.recurrency){
+					for(int s = 0; s < (int) notation.shifts.size(); s++){
+						periods[d].shifts[notation.shifts[s]-1] = value;
+					}
+				}
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+

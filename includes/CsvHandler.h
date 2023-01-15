@@ -19,7 +19,7 @@ using namespace std;
 
 vector<vector<string>> readCSV(string fileName);
 
-void readPhysiciansData(vector<Physician> *physicians, string fileName);
+void readPhysiciansData(vector<Physician> *physicians, string fileName, vector<Date> days);
 
 void readConfigData(int *maxHoursMargin, int *minHoursMargin, int *maxNightShifts, vector<Date> *days, bool *normalization, bool *idealAndNadirPointVerification, int *layers, int *timePerSolution, string fileName);
 

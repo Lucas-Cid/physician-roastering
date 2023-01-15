@@ -7,6 +7,7 @@ RosteringInput::RosteringInput() {
 	this->normalization = false;
 	this->idealAndNadirPointVerification = false;
 	this->verificationOn = false;
+	this->optimize = false;
 	this->layers = 1;
 	this->timePerSolution = 1;
 }

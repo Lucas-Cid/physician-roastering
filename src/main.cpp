@@ -21,12 +21,12 @@ class Physician;
 
 RosteringInput readData(string configFile, string physicianFile, string shiftFile, string areaFile){
 	RosteringInput input;
-	//Lê o arquivo com as características dos médicos
-	readPhysiciansData(&input.physicians, physicianFile);
 
 	//Lê o arquivo de configuração
-
 	readConfigData(&input.maxHoursMargin, &input.minHoursMargin, &input.maxNightShifts, &input.days, &input.normalization, &input.idealAndNadirPointVerification, &input.layers, &input.timePerSolution ,configFile);
+
+	//Lê o arquivo com as características dos médicos
+	readPhysiciansData(&input.physicians, physicianFile, input.days);
 
 	//Lê o arquivo com as características dos turnos
 	readShiftsData(&input.shifts, shiftFile);
@@ -315,6 +315,19 @@ int main(int argc, char** argv) {
 	vector<vector<Solution>> allSolutions;
 	int dimension = 4;
 	for(int i = 0; i < (int) inputs.size(); i++){
+//		vector<PeriodRestriction> periodRestriction = handlePossiblePeriod("S3;1S6T3;2S6T3", "1S7T1;1S7T2;2S7T1;2S7T2;3S7;4S7;1S1;2S1;3S1;4S1", inputs[i].days);
+//		vector<PeriodRestriction> periodRestriction = inputs[i].physicians[2].possiblePeriod;
+//		for(int d = 0; d < (int) periodRestriction.size(); d++){
+//			cout << periodRestriction[d].date.day << "/" << periodRestriction[d].date.month << ": " <<  periodRestriction[d].date.weekDay + 1 << endl;
+//
+//			for(int s = 0; s < 3; s++){
+//				if(periodRestriction[d].shifts[s])
+//					cout << "true ";
+//				else
+//					cout << "false ";
+//			}
+//			cout << endl << endl;
+//		}
 		vector<Solution> solutions;
 		if(!strcmp(argv[1], "solve")){
 
