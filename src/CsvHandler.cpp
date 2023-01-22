@@ -200,6 +200,31 @@ void writeSolutionFile(Solution solution, RosteringInput input, string fileName)
 					file << endl;
 				}
 			}
+
+			if(s != (int) input.shifts.size() - 1){
+				int va = 2;
+				for (int v = 0; v < va; v++) {
+					file << "Ambulatório" << " - " << v + 1 << ",";
+
+					if(showShiftName){
+						file << input.shifts[s].name;
+						showShiftName = false;
+					}
+					file << ",";
+					for (int d = w * 7; d < (w + 1) * 7 && d < (int) input.days.size(); d++) {
+						bool found = false;
+						for(int p = 0; p < (int) input.physicians.size(); p++){
+							if(input.physicians[p].ambulatoryPeriod[d].shifts[s] && !found){
+								file << input.physicians[p].name;
+								input.physicians[p].ambulatoryPeriod[d].shifts[s] = false;
+								found = true;
+							}
+						}
+						file << ",";
+					}
+					file << endl;
+				}
+			}
 		}
 
 	}

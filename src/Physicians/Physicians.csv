@@ -11,7 +11,7 @@ Laurene,29,1,None,24,6,0,1S1; 1S7; 3S1; 3S7; 1S6; 3S6,S2; S5; S6,
 Marcos,43,12,Dermatologist,30,2,0,,S5,
 Krisna,31,2,None,24,4,0,,,
 Vanessa,33,3,Dermatologist,30,2,0,S2; S4,T3,
-Cristiane,43,11,Allergist,30,0,2,,,
+Cristiane,43,11,Allergist,30,0,2,,,S2T1
 Agostinho,58,23,Ophthalmologist,24,0,4,D25; D28; D1,,
 Ilanne,52,21,Obstetrician,24,0,4,S2T3; S3T3; S3; S5; D1; D2; D3; D4; D5; D18T3,,
 Ana Luiza,34,5,Ophthalmologist,24,0,5,D3; D4; D9; D10; D30; D31,,

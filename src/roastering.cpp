@@ -87,7 +87,6 @@ Solution rostering(RosteringInput input){
 //			IloIntExpr periodWorkedHours(env);
 //			for(int w = d; w < d + 7; w++){
 //				for(int s = 0; s < (int)shifts.size(); s++){
-//					periodWorkedHours += (physicians[p].ambulatoryPeriod[d].shifts[s]) * shifts[s].hours;
 //					for(int a = 0; a < (int)areas.size(); a++){
 //						for(int v = 0; v < areas[a].spots[s]; v++){
 //							periodWorkedHours += (assignment[w][s][a][v] == p) * shifts[s].hours;
@@ -201,7 +200,6 @@ Solution rostering(RosteringInput input){
 				// Variável quer armazena as horas trabalhadas por um médico no dia d
 				IloIntExpr workedHours(env);
 				for(int s = 0; s < (int)shifts.size(); s++){
-					workedHours += (physicians[p].ambulatoryPeriod[d].shifts[s]) * shifts[s].hours;
 					for(int a = 0; a < (int)areas.size(); a++){
 						for(int v = 0; v < areas[a].spots[s]; v++){
 							workedHours += (assignment[d][s][a][v] == p) * shifts[s].hours;
@@ -242,7 +240,6 @@ Solution rostering(RosteringInput input){
 					for(int a = 0; a < (int)areas.size(); a++){
 						for(int v = 0; v < areas[a].spots[s]; v++){
 							workedHours += (assignment[d][s][a][v] == p) * shifts[s].hours;
-							workedHours += (physicians[p].ambulatoryPeriod[d].shifts[s]) * shifts[s].hours;
 						}
 					}
 				}

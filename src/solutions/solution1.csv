@@ -1,49 +1,65 @@
-,Values,Real values,Min,Max,Mean,,,
-Inconsistent assignment over weeks,6566,310,4,29,17,,,
-Daily workload over recomendation,1008,96,0,18,5,,,
-Monthly workload deviation,33514,738,20,68,41,,,
-Weekly workload deviation,287424,2184,66,180,121,,,
-,,,,,,,,
-,,,,,,,,
-,,Qua,Qui,Sex,Sab,Dom,Seg,Ter
-,,30/03,31/03,01/04,02/04,03/04,04/04,05/04
-Enf - 1,Manhã,Ludmilla,Ludmilla,Krisna,Déborah,Cristiane,Ludmilla,Déborah
-Enf - 2,,Déborah,Laurene,Cristiane,Marcos,Agostinho,Giselle,AnaLuiza
-PA - 1,,Giselle,Marcos,Giselle,Juliana,Mariana,Krisna,Luciana
-Enf - 1,Tarde,Giselle,Ludmilla,Giselle,Mariana,Vanessa,Laurene,Marcelo
-PA - 1,,Krisna,Marcos,AnaLuiza,Juliana,Mariana,Krisna,Agostinho
-Ped - 1,Noite,Krisna,Agostinho,Luciana,Déborah,Cristiane,Gustavo,Ludmilla
-Ped - 2,,Ilanne,Marcelo,Vanessa,Clarissa,Marcelo,Mariana,Luciana
-,,,,,,,,
-,,,,,,,,
-,,Qua,Qui,Sex,Sab,Dom,Seg,Ter
-,,06/04,07/04,08/04,09/04,10/04,11/04,12/04
-Enf - 1,Manhã,Giselle,Laurene,Laurene,Ludmilla,Ludmilla,Mariana,Luciana
-Enf - 2,,Mariana,Cristiane,Marcelo,Clarissa,Ilanne,Mariana,Marcelo
-PA - 1,,Krisna,AnaLuiza,Giselle,Juliana,Mariana,Déborah,Ludmilla
-Enf - 1,Tarde,Clarissa,Marcos,Krisna,Déborah,Vanessa,Mariana,Krisna
-PA - 1,,Giselle,Déborah,Mariana,Giselle,Laurene,Déborah,Giselle
-Ped - 1,Noite,Ilanne,Marcos,Laurene,Juliana,Vanessa,Gustavo,Luciana
-Ped - 2,,Marcelo,Vanessa,Agostinho,Agostinho,Cristiane,AnaLuiza,AnaLuiza
-,,,,,,,,
-,,,,,,,,
-,,Qua,Qui,Sex,Sab,Dom,Seg,Ter
-,,13/04,14/04,15/04,16/04,17/04,18/04,19/04
-Enf - 1,Manhã,Ludmilla,Mariana,Ludmilla,Ludmilla,Agostinho,Mariana,Luciana
-Enf - 2,,Déborah,Krisna,Agostinho,Clarissa,AnaLuiza,AnaLuiza,Mariana
-PA - 1,,Agostinho,Mariana,Giselle,Juliana,Vanessa,Laurene,Krisna
-Enf - 1,Tarde,Clarissa,Cristiane,Cristiane,Juliana,Ludmilla,Mariana,Cristiane
-PA - 1,,Ilanne,Marcos,AnaLuiza,Marcelo,Agostinho,Krisna,Déborah
-Ped - 1,Noite,Giselle,Laurene,Déborah,Ilanne,Giselle,Mariana,Luciana
-Ped - 2,,Marcelo,Marcos,Vanessa,Marcelo,Cristiane,Gustavo,Cristiane
-,,,,,,,,
-,,,,,,,,
-,,Qua,,,,,,
-,,20/04,,,,,,
-Enf - 1,Manhã,Ludmilla,,,,,,
-Enf - 2,,Giselle,,,,,,
-PA - 1,,AnaLuiza,,,,,,
-Enf - 1,Tarde,Giselle,,,,,,
-PA - 1,,Clarissa,,,,,,
-Ped - 1,Noite,Giselle,,,,,,
-Ped - 2,,Gustavo,,,,,,
+,Values,Real values,Min,Max,Mean
+Inconsistent assignment over weeks,6946,314,6,39,18
+Daily workload over recomendation,2160,132,0,36,8
+Monthly workload deviation,47889,815,2,102,48
+Weekly workload deviation,930096,3648,72,438,215
+
+
+,,Qua,Qui,Sex,Sab,Dom,Seg,Ter,
+,,30/03,31/03,01/04,02/04,03/04,04/04,05/04,
+Enf - 1,Manhã,Ilanne,Laurene,Giselle,Clarissa,Mariana,Agostinho,Cristiane,
+Enf - 2,,Marcelo,Cristiane,Krisna,Agostinho,Vanessa,Marcelo,Marcelo,
+PA - 1,,Ludmilla,Marcos,Ludmilla,Déborah,Déborah,Laurene,Luciana,
+Ambulatório - 1,,,,,,,Déborah,,
+Ambulatório - 2,,,,,,,Cristiane,,
+Enf - 1,Tarde,Krisna,Marcos,Krisna,Déborah,Clarissa,Krisna,Marcelo,
+PA - 1,,Ludmilla,Ludmilla,AnaLuiza,Marcos,Cristiane,Déborah,Ludmilla,
+Ambulatório - 1,,,,,,,,,
+Ambulatório - 2,,,,,,,,,
+Ped - 1,Noite,Gustavo,Laurene,Ludmilla,Ludmilla,Ludmilla,Giselle,Juliana,
+Ped - 2,,Marcelo,Agostinho,Krisna,Juliana,Mariana,Krisna,Krisna,
+
+
+,,Qua,Qui,Sex,Sab,Dom,Seg,Ter,
+,,06/04,07/04,08/04,09/04,10/04,11/04,12/04,
+Enf - 1,Manhã,Ludmilla,Giselle,Laurene,Mariana,Giselle,Krisna,Cristiane,
+Enf - 2,,Déborah,Marcos,Marcelo,Marcelo,Laurene,Agostinho,AnaLuiza,
+PA - 1,,Agostinho,Cristiane,Giselle,Cristiane,Marcos,AnaLuiza,Agostinho,
+Ambulatório - 1,,,,,,,Déborah,,
+Ambulatório - 2,,,,,,,Cristiane,,
+Enf - 1,Tarde,Clarissa,Marcelo,AnaLuiza,Vanessa,Ludmilla,Cristiane,Marcelo,
+PA - 1,,Marcelo,Marcos,Marcelo,Clarissa,Agostinho,Laurene,Agostinho,
+Ambulatório - 1,,,,,,,,,
+Ambulatório - 2,,,,,,,,,
+Ped - 1,Noite,Déborah,Marcos,Giselle,Clarissa,Mariana,Giselle,Mariana,
+Ped - 2,,Krisna,Agostinho,Luciana,Krisna,Vanessa,Krisna,AnaLuiza,
+
+
+,,Qua,Qui,Sex,Sab,Dom,Seg,Ter,
+,,13/04,14/04,15/04,16/04,17/04,18/04,19/04,
+Enf - 1,Manhã,Krisna,Laurene,Cristiane,Ilanne,Cristiane,Agostinho,Cristiane,
+Enf - 2,,Agostinho,Krisna,Ilanne,Marcelo,Ilanne,Marcelo,Marcelo,
+PA - 1,,Déborah,Marcos,Agostinho,Agostinho,Gustavo,AnaLuiza,Agostinho,
+Ambulatório - 1,,,,,,,Déborah,,
+Ambulatório - 2,,,,,,,Cristiane,,
+Enf - 1,Tarde,Ilanne,Krisna,Cristiane,Ilanne,Ilanne,Cristiane,Agostinho,
+PA - 1,,Clarissa,Marcelo,Déborah,Mariana,Déborah,Marcelo,Déborah,
+Ambulatório - 1,,,,,,,,,
+Ambulatório - 2,,,,,,,,,
+Ped - 1,Noite,Agostinho,Krisna,Vanessa,Clarissa,Ludmilla,Gustavo,Giselle,
+Ped - 2,,Ilanne,Marcelo,Cristiane,Vanessa,Giselle,Krisna,Luciana,
+
+
+,,Qua,
+,,20/04,
+Enf - 1,Manhã,Agostinho,
+Enf - 2,,AnaLuiza,
+PA - 1,,Ilanne,
+Ambulatório - 1,,,
+Ambulatório - 2,,,
+Enf - 1,Tarde,Ilanne,
+PA - 1,,Ludmilla,
+Ambulatório - 1,,,
+Ambulatório - 2,,,
+Ped - 1,Noite,Krisna,
+Ped - 2,,AnaLuiza,
