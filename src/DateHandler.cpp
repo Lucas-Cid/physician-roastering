@@ -89,6 +89,18 @@ vector<PeriodRestriction> handlePossiblePeriod(string possiblePeriodsString, str
 	return periods;
 }
 
+vector<PeriodRestriction> handleAmbulatoryPeriod(string ambulatoryPeriodsString, vector<Date> days){
+	vector<string> ambulatoryPeriods = split(ambulatoryPeriodsString, ";");
+
+	vector<PeriodRestriction> periods = initializePeriodRestriction(days, false);
+
+	if(ambulatoryPeriodsString.size() > 0)
+		interpretNotation(ambulatoryPeriods, periods, true);
+
+	return periods;
+}
+
+
 void interpretNotation(vector<string> notationVector, vector<PeriodRestriction> &periods, bool value){
 	// TODO Adicionar regex para verificar se a notação é válida
 	// Para cada período indicado

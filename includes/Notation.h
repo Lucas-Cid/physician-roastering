@@ -6,6 +6,7 @@
 
 using namespace std;
 
+// TODO Reavaliar nome da classe
 class Notation {
 public:
 	int recurrency;
